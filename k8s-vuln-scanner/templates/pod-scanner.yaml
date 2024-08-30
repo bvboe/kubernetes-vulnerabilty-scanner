@@ -23,6 +23,8 @@ spec:
           value: {{ .Values.podScanner.scannerIntegration.containerManager }}
         - name: POTENTIAL_DOCKER_SOCKET_LOCATIONS
           value: {{ .Values.podScanner.scannerIntegration.potentialDockerSocketLocations }}
+        - name: POTENTIAL_CONTAINERD_NAMESPACES
+          value: {{ .Values.podScanner.scannerIntegration.potentialContainerDNamespaces }}
         - name: POTENTIAL_CONTAINERD_SOCKET_LOCATIONS
           value: {{ .Values.podScanner.scannerIntegration.potentialContainerDSocketLocations }}
         - name: NODE_NAME

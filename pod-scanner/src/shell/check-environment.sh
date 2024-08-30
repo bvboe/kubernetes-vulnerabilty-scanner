@@ -4,32 +4,16 @@ echo "Starting" >> /tmp/check-environment.log
 CONTAINER_MANAGER=$1
 POTENTIAL_DOCKER_SOCKET_LOCATIONS=$2
 POTENTIAL_CONTAINERD_SOCKET_LOCATIONS=$3
+POTENTIAL_CONTAINERD_NAMESPACES=$4
 
 echo "CONTAINER_MANAGER $CONTAINER_MANAGER" >> /tmp/check-environment.log
 echo "POTENTIAL_DOCKER_SOCKET_LOCATIONS $POTENTIAL_DOCKER_SOCKET_LOCATIONS" >> /tmp/check-environment.log
 echo "POTENTIAL_CONTAINERD_SOCKET_LOCATIONS $POTENTIAL_CONTAINERD_SOCKET_LOCATIONS" >> /tmp/check-environment.log
+echo "POTENTIAL_CONTAINERD_NAMESPACES $POTENTIAL_CONTAINERD_NAMESPACES" >> /tmp/check-environment.log
 
-if [ "$CONTAINER_MANAGER" = "docker" ] || [ "$CONTAINER_MANAGER" = "autodetect" ]; then
-  echo "Look for Docker runtime" >> /tmp/check-environment.log
-  IFS=',' read -r -a array <<< "$POTENTIAL_DOCKER_SOCKET_LOCATIONS"
-  for item in "${array[@]}"; do
-    export DOCKER_HOST="unix://$item"
-    echo "Look for Docker at $DOCKER_HOST" >> /tmp/check-environment.log
-
-    #Check if Docker is running
-    if docker info > /dev/null 2>&1; then
-        echo "Found docker runtime" >> /tmp/check-environment.log
-        result="{\"runtime\": \"docker\", \"DOCKER_HOST\":\"$DOCKER_HOST\"}"
-        echo $result >> /tmp/check-environment.log
-        echo $result
-        exit 0
-    fi
-  done
-fi
-
-# We're most likely dealing with ctr, which depending on the distro, may be at one of many different places
-# Let's therefore go through a list of places we've seen ContainerD running and figure out which is the right one
+#Figure out if this is a ContainerD based configuration
 if [ "$CONTAINER_MANAGER" = "containerd" ] || [ "$CONTAINER_MANAGER" = "autodetect" ]; then
+  #Go through all potential locations of ContainerD running and find the right one
   IFS=',' read -r -a array <<< "$POTENTIAL_CONTAINERD_SOCKET_LOCATIONS"
   for item in "${array[@]}"; do
     echo "Try $item" >> /tmp/check-environment.log
@@ -44,8 +28,9 @@ if [ "$CONTAINER_MANAGER" = "containerd" ] || [ "$CONTAINER_MANAGER" = "autodete
     fi
   done
 
-  # Iterate through all ContainerD namespaces and pick the one with containers running
-  for namespace in $(ctr namespaces list -q); do
+  # Go through all namespaces provded and see which one has containers running
+  IFS=',' read -r -a array <<< "$POTENTIAL_CONTAINERD_NAMESPACES"
+  for namespace in "${array[@]}"; do
     # Count the number of running containers in the current namespace
     echo "Try ctr namespace $namespace" >> /tmp/check-environment.log
     running_containers=$(ctr -n "$namespace" containers list --quiet | wc -l)
@@ -57,6 +42,25 @@ if [ "$CONTAINER_MANAGER" = "containerd" ] || [ "$CONTAINER_MANAGER" = "autodete
       echo $result >> /tmp/check-environment.log
       echo $result
       exit 0
+    fi
+  done
+fi
+
+#Figure out if this is a Docker based configuration
+if [ "$CONTAINER_MANAGER" = "docker" ] || [ "$CONTAINER_MANAGER" = "autodetect" ]; then
+  echo "Look for Docker runtime" >> /tmp/check-environment.log
+  IFS=',' read -r -a array <<< "$POTENTIAL_DOCKER_SOCKET_LOCATIONS"
+  for item in "${array[@]}"; do
+    export DOCKER_HOST="unix://$item"
+    echo "Look for Docker at $DOCKER_HOST" >> /tmp/check-environment.log
+
+    #Check if Docker is running
+    if docker info > /dev/null 2>&1; then
+        echo "Found docker runtime" >> /tmp/check-environment.log
+        result="{\"runtime\": \"docker\", \"DOCKER_HOST\":\"$DOCKER_HOST\"}"
+        echo $result >> /tmp/check-environment.log
+        echo $result
+        exit 0
     fi
   done
 fi
