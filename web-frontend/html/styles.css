@@ -1,0 +1,24 @@
+h1 {
+    padding: 10px 20px;
+}
+
+h2 {
+    padding: 0px 10px;
+}
+h3 {
+    padding: 0px 10px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.listingTable {
+    border-collapse: collapse;
+}
+
+.listingTable th, .listingTable td {
+    border: 1px solid;
+    padding: 8px;
+}

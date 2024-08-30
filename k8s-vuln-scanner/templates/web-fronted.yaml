@@ -1,0 +1,38 @@
+{{ if .Values.webFrontend.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web-frontend
+  name: web-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-frontend
+  template:
+    metadata:
+      labels:
+        app: web-frontend
+    spec:
+      containers:
+      - name: nginx
+        image: {{ .Values.webFrontend.image.repository }}:{{ .Values.webFrontend.image.tag }}
+        imagePullPolicy: {{ .Values.webFrontend.image.pullPolicy }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-frontend
+  labels:
+    app: web-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: web-frontend
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+{{end}}

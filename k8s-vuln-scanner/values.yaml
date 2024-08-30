@@ -1,0 +1,26 @@
+podScanner:
+  enabled: true
+  image:
+    repository: "bjornvb/k8s-scanner-pod-scanner"
+    pullPolicy: IfNotPresent
+    tag: "0.1"
+  #Settings determining how the scanner integrates with container manager
+  scannerIntegration:
+    #docker, containerd or autodetect
+    containerManager: autodetect
+    #Comma-separated list of potential places the docer socket could be on the scanner container.
+    potentialDockerSocketLocations: "/host/run/docker.sock"
+    #Comma-separated list of potential places the ContainerD socket could be on the scanner container. Added different known locations for K3s, MicroK8s, Kind, regular ContainerD
+    potentialContainerDSocketLocations: "/host/run/k3s/containerd/containerd.sock,/host/var/snap/microk8s/common/run/containerd.sock,/host/run/containerd/containerd.sock"
+vulnerabilityCoordinator:
+  enabled: true
+  image:
+    repository: "bjornvb/k8s-scanner-vulnerability-coordinator"
+    pullPolicy: IfNotPresent
+    tag: "0.1"
+webFrontend:
+  enabled: true
+  image:
+    repository: "bjornvb/k8s-scanner-web-frontend"
+    pullPolicy: IfNotPresent
+    tag: "0.1"

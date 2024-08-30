@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Vulnerability Dashboard</title>
+        <script src="shared-scripts.js" defer></script>
+        <script src="sbom-script.js" defer></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <table width="100%">
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td><h1><a href="index.html">Containers</a></h1></td>
+                            <td><h1><a href="cves.html">CVEs</a></h1></td>
+                            <td><h1><a href="sbom.html">SBOM</a></h1></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <table id="namespaceTable">
+                        <thead>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+                <td width="100%" valign="top">
+                    <table id="sbomTable" width="100%" class="listingTable">
+                        <thead>
+                            <tr>
+                                <th><b>Name</b></th>
+                                <th><b>Version</b></th>
+                                <th><b>Type</b></th>
+                                <th><b># Images</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
