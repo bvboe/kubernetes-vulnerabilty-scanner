@@ -1,3 +1,8 @@
+#FROM cgr.dev/chainguard/go:latest AS gobuilder
+#WORKDIR /workdir
+#RUN go install go.etcd.io/bbolt/cmd/bbolt@latest
+#RUN go install github.com/br0xen/boltbrowser@latest
+
 FROM cgr.dev/chainguard/python:latest-dev AS builder
 ENV LANG=C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -14,7 +19,7 @@ FROM cgr.dev/chainguard/glibc-dynamic:latest-dev
 
 #Run as root for access to docker / containerd
 USER root
-RUN apk add --no-cache syft ctr docker-cli python-3.12 nano
+RUN apk add --no-cache syft ctr docker-cli python-3.12 nano jq
 
 ENV LANG=C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -23,9 +28,10 @@ ENV PATH="/flask-app/venv/bin":$PATH
 
 WORKDIR /flask-app
 
+COPY --from=builder /flask-app/venv /flask-app/venv
+#COPY --from=gobuilder /root/go/bin/ /bin/
 COPY src/python/*.py ./
 COPY src/shell/* ./
-COPY --from=builder /flask-app/venv /flask-app/venv
 
 EXPOSE 8080
 ENTRYPOINT ["python", "-m", "gunicorn", "--timeout", "60", "-b", "0.0.0.0:8080", "app:app"]

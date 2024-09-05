@@ -1,9 +1,9 @@
 podScanner:
   enabled: true
   image:
-    repository: "bjornvb/k8s-scanner-pod-scanner"
+    repository: "bjornvb/k8s-pod-scanner"
     pullPolicy: "IfNotPresent"
-    tag: "0.1"
+    tag: "0.3"
   #Settings determining how the scanner integrates with container manager
   scannerIntegration:
     #docker, containerd or autodetect (test containerd first, then Docker)
@@ -14,15 +14,17 @@ podScanner:
     potentialContainerDSocketLocations: "/host/run/containerd/containerd.sock,/host/run/k3s/containerd/containerd.sock,/host/var/snap/microk8s/common/run/containerd.sock"
     #Comma-separated list of potential ContainerD namespaces to look for containers in.
     potentialContainerDNamespaces: "k8s.io"
+    #Comma-separated list of potential directories where ContainerD is storing its container file systems
+    potentialContainerDRuntimeTaskLocations: "/host/run/containerd/io.containerd.runtime.v2.task,/host/run/k3s/containerd/io.containerd.runtime.v2.task,/host/var/snap/microk8s/common/run/containerd/io.containerd.runtime.v2.task"
 vulnerabilityCoordinator:
   enabled: true
   image:
     repository: "bjornvb/k8s-scanner-vulnerability-coordinator"
     pullPolicy: "IfNotPresent"
-    tag: "0.1"
+    tag: "0.3"
 webFrontend:
   enabled: true
   image:
     repository: "bjornvb/k8s-scanner-web-frontend"
     pullPolicy: "IfNotPresent"
-    tag: "0.1"
+    tag: "0.3"

@@ -27,6 +27,8 @@ spec:
           value: {{ .Values.podScanner.scannerIntegration.potentialContainerDNamespaces }}
         - name: POTENTIAL_CONTAINERD_SOCKET_LOCATIONS
           value: {{ .Values.podScanner.scannerIntegration.potentialContainerDSocketLocations }}
+        - name: POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS
+          value: {{ .Values.podScanner.scannerIntegration.potentialContainerDRuntimeTaskLocations }}
         - name: NODE_NAME
           valueFrom:
             fieldRef:
@@ -50,6 +52,9 @@ spec:
         - name: hostrun
           mountPath: /host/run
           readOnly: true
+        - name: hostmounts
+          mountPath: /host/mounts
+          readOnly: true
       volumes:
       - name: hostvar
         hostPath:
@@ -59,4 +64,8 @@ spec:
         hostPath:
           path: /run
           type: Directory
+      - name: hostmounts
+        hostPath:
+          path: /proc/mounts
+          type: File
 {{end}}

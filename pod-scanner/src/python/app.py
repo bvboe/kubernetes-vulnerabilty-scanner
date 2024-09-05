@@ -12,6 +12,7 @@ CONTAINER_MANAGER = os.getenv("CONTAINER_MANAGER")
 POTENTIAL_DOCKER_SOCKET_LOCATIONS = os.getenv("POTENTIAL_DOCKER_SOCKET_LOCATIONS")
 POTENTIAL_CONTAINERD_SOCKET_LOCATIONS = os.getenv("POTENTIAL_CONTAINERD_SOCKET_LOCATIONS")
 POTENTIAL_CONTAINERD_NAMESPACES = os.getenv("POTENTIAL_CONTAINERD_NAMESPACES")
+POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS = os.getenv("POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS")
 
 print(f"Starting app on node {NODE_NAME}")
 print(f"NODE_NAME {NODE_NAME}")
@@ -25,16 +26,14 @@ print(f"POTENTIAL_CONTAINERD_NAMESPACES {POTENTIAL_CONTAINERD_NAMESPACES}")
 
 def get_host_configuration():
     print("get_host_configuration()")
-    result = subprocess.run(["./check-environment.sh", CONTAINER_MANAGER, POTENTIAL_DOCKER_SOCKET_LOCATIONS, POTENTIAL_CONTAINERD_SOCKET_LOCATIONS, POTENTIAL_CONTAINERD_NAMESPACES], capture_output=True, text=True, check=True)
+    conig_file_location = "/tmp/scanner-configuration.json"
+    result = subprocess.run(["./check-environment.sh", conig_file_location, CONTAINER_MANAGER, POTENTIAL_DOCKER_SOCKET_LOCATIONS, POTENTIAL_CONTAINERD_SOCKET_LOCATIONS, POTENTIAL_CONTAINERD_NAMESPACES, POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
+    print(result.stdout)
 
-    if result.stderr:
-        print("Command error:")
-        print(result.stderr)
-        return None
-    else:
-        print(f"Result:")
-        print(result.stdout)
-        return json.loads(result.stdout)
+    with open(conig_file_location, 'r') as file:
+        scanner_configuration = file.read()
+        print(scanner_configuration)
+        return json.loads(scanner_configuration)
 
 HOST_CONFIGURATION = get_host_configuration()
 print(f"Current host configuration: {HOST_CONFIGURATION}")
@@ -62,10 +61,12 @@ def index():
 def get_sbom():
     image = request.args.get('image')
     image_id = request.args.get('image_id')
+    container_id = request.args.get('container_id')
     sbom_file = "/tmp/sbom.json"
     print(f"get_sbom()")
     print(f"image: {image}")
     print(f"image_id: {image_id}")
+    print(f"container_id: {container_id}")
     image_sha = image.split(":")[0] + "@" + image_id
 
     if HOST_CONFIGURATION['runtime'] == "docker":
@@ -81,7 +82,9 @@ def get_sbom():
         print("Do Containerd based scan")
         containerd_address = HOST_CONFIGURATION['CONTAINERD_ADDRESS']
         containerd_namespace = HOST_CONFIGURATION['CONTAINERD_NAMESPACE']
-        create_sbom(["./containerd-sbom.sh", containerd_address, containerd_namespace, sbom_file, image_sha, image, image_id])
+        containerd_runtime_task_location = HOST_CONFIGURATION['CONTAINERD_RUNTIME_TASK_LOCATION']
+        create_sbom(["./containerd-filesystem-sbom.sh", containerd_runtime_task_location, container_id, image, sbom_file])
+#        create_sbom(["./containerd-containerfile-sbom.sh", containerd_address, containerd_namespace, sbom_file, image_sha, image, image_id])
         sbom = load_sbom(sbom_file)
         if sbom:
             return {"result": "success", "sbom": sbom}
