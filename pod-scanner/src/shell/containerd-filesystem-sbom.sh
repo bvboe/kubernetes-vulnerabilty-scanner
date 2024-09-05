@@ -28,15 +28,14 @@ rm -f $OUTPUT_FILE
 
 current_config=`cat /host/mounts | grep ${cleaned_container_id}`
 lower_dir_path=$(echo "$current_config" | sed -n 's/.*lowerdir=\([^,]*\),upperdir=.*/\1/p')
-new_lower_dir_path="${lower_dir_path//\/var\//\/host\/var\/}"
 
 cd /tmp
 rm -fr tmpcontainer
 mkdir tmpcontainer
 
-IFS=':' read -ra paths <<< "$new_lower_dir_path" # Split the string into an array
+IFS=':' read -ra paths <<< "$lower_dir_path" # Split the string into an array
 for (( idx=${#paths[@]}-1 ; idx>=0 ; idx-- )); do
-    tmp_path="${paths[idx]}"
+    tmp_path="/host${paths[idx]}"
     echo Copying $tmp_path to folder
     cp -rf $tmp_path tmpcontainer
 done
