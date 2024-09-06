@@ -1,12 +1,12 @@
-async function loadContainerTable(selectedNamespace) {
-    console.log("loadContainerTable(" + selectedNamespace + ")");
+async function loadPodsTable(selectedNamespace) {
+    console.log("loadPodsTable(" + selectedNamespace + ")");
     namespaceString="";
     if(selectedNamespace !== null) {
         console.log("Namespace is set");
         namespaceString = "?namespace="+selectedNamespace;
     }
-    const response = await fetch("/api/vulnsummary/container" + namespaceString);
-    console.log("loadContainerTable() - Got data")
+    const response = await fetch("/api/podsummary" + namespaceString);
+    console.log("loadPodsTable() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -16,7 +16,7 @@ async function loadContainerTable(selectedNamespace) {
     const data = await response.json();
 
     // Get the table body element where rows will be added
-    const tableBody = document.querySelector("#vulnerabilityTable tbody");
+    const tableBody = document.querySelector("#podsTable tbody");
 
     //Clear the table
     tableBody.replaceChildren();
@@ -25,9 +25,9 @@ async function loadContainerTable(selectedNamespace) {
         console.log(item)
         // Create a new row
         const newRow = document.createElement("tr");
-
-        addCellToRow(newRow, "left", item.image + "</br>" + item.image_id);
-        addCellToRow(newRow, "right", item.container_instances.length);
+        addCellToRow(newRow, "left", item.namespace);
+        addCellToRow(newRow, "left", item.pod_name);
+        addCellToRow(newRow, "left", item.container_name);
 
         if(Object.keys(item.vulnarbility_summary).length > 0) {
             addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.critical);
@@ -45,7 +45,6 @@ async function loadContainerTable(selectedNamespace) {
             newCell = addCellToRow(newRow, "left", "No Scan Information");
             newCell.colSpan = 11;
         }
-
         // Append the new row to the table body
         tableBody.appendChild(newRow);
     });
@@ -62,5 +61,5 @@ function addCellToRow(toRow, align, text) {
 const urlParams = new URLSearchParams(window.location.search);
 const namespace = urlParams.get('namespace');
 
-loadContainerTable(namespace)
-loadNamespaceTable("index.html")
+loadPodsTable(namespace)
+loadNamespaceTable("pods.html")

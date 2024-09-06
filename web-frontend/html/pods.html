@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Vulnerability Dashboard</title>
         <script src="shared-scripts.js" defer></script>
-        <script src="cves-script.js" defer></script>
+        <script src="pods-script.js" defer></script>
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
@@ -31,21 +31,30 @@
                     </table>
                 </td>
                 <td width="100%" valign="top">
-                    <table id="cvesTable" width="100%" class="listingTable">
+                    <table id="podsTable" width="100%" class="listingTable">
                         <thead>
                             <tr>
-                                <th><b>Severity</b></th>
-                                <th><b>Vulnerability</b></th>
-                                <th><b>Name</b></th>
-                                <th><b>Installed</b></th>
-                                <th><b>Fixed In</b></th>
-                                <th><b>Status</b></th>
-                                <th><b>Type</b></th>
-                                <th><b>Images Affected</b></th>
+                                <th rowspan="2"><b>Namespace</b></th>
+                                <th rowspan="2"><b>Pod</b></th>
+                                <th rowspan="2"><b>Container</b></th>
+                                <th colspan="6"><b>Vulnerabilities</b></th>
+                                <th colspan="4"><b>Status</b></th>
+                                <th rowspan="2"><b># Packages</b></th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
+                            <tr>
+                                <th><b>Critical</b></th>
+                                <th><b>High</b></th>
+                                <th><b>Medium</b></th>
+                                <th><b>Low</b></th>
+                                <th><b>Negligible</b></th>
+                                <th><b>Unknown</b></th>
+                                <th><b>Fixed</b></th>
+                                <th><b>Not Fixed</b></th>
+                                <th><b>Won't Fix</b></th>
+                                <th><b>Unknown</b></th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
                     </table>
                 </td>
             </tr>
