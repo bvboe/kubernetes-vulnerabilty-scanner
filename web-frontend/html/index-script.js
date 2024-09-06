@@ -26,7 +26,7 @@ async function loadContainerTable(selectedNamespace) {
         // Create a new row
         const newRow = document.createElement("tr");
 
-        addCellToRow(newRow, "left", item.image + "</br>" + item.image_id);
+        addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.image + "</br>" + item.image_id + "</a");
         addCellToRow(newRow, "right", item.container_instances.length);
 
         if(Object.keys(item.vulnarbility_summary).length > 0) {

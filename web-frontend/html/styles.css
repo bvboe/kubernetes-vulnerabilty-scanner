@@ -22,3 +22,11 @@ a {
     border: 1px solid;
     padding: 8px;
 }
+
+.summaryTable {
+    border-collapse: collapse;
+}
+.summaryTable td {
+    padding: 8px 10px 8px 20px;    
+    /* border: 1px solid; */
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Vulnerability Dashboard</title>
+        <script src="shared-scripts.js" defer></script>
+        <script src="image-script.js" defer></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <table width="100%">
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td><h3><a href="#" onclick="window.history.back();">Back</a></h3></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" valign="top">
+                    <h1>Image Details</h1>
+                    <table id="summaryTable" valign="top" class="summaryTable">
+                        <tr>
+                            <td><b>Image ID</b></td>
+                            <td id="image_id"></td>
+                        </tr>
+                        <tr>
+                            <td valign="top"><b>Repository</b></td>
+                            <td id="repositories"></td>
+                        </tr>
+                        <tr>
+                            <td valign="top"><b>Container Instances</b></td>
+                            <td id="instances"></td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td><h1 style="cursor: pointer" onclick="showVulnerabilityTable()">Vulnerabilities</h1></td>
+                            <td><h1 style="cursor: pointer" onclick="showSBOMTable()">SBOM</h1></td>
+                        </tr>
+                    </table>
+                    <table valign="top" class="summaryTable">
+                        <tr>
+                            <td>
+                                <table id="cvesTable" class="listingTable" style="display: table;">
+                                    <thead>
+                                        <tr>
+                                            <th><b>Severity</b></th>
+                                            <th><b>Vulnerability</b></th>
+                                            <th><b>Name</b></th>
+                                            <th><b>Installed</b></th>
+                                            <th><b>Fixed In</b></th>
+                                            <th><b>Status</b></th>
+                                            <th><b>Type</b></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            
+                                <table id="sbomTable" class="listingTable" style="display: none;">
+                                    <thead>
+                                        <tr>
+                                            <th><b>Name</b></th>
+                                            <th><b>Version</b></th>
+                                            <th><b>Type</b></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

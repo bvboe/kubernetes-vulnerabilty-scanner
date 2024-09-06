@@ -25,9 +25,9 @@ async function loadPodsTable(selectedNamespace) {
         console.log(item)
         // Create a new row
         const newRow = document.createElement("tr");
-        addCellToRow(newRow, "left", item.namespace);
-        addCellToRow(newRow, "left", item.pod_name);
-        addCellToRow(newRow, "left", item.container_name);
+        addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.namespace + "</a");
+        addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.pod_name + "</a");
+        addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.container_name + "</a");
 
         if(Object.keys(item.vulnarbility_summary).length > 0) {
             addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.critical);
