@@ -3,7 +3,7 @@ podScanner:
   image:
     repository: "bjornvb/k8s-pod-scanner"
     pullPolicy: "IfNotPresent"
-    tag: "0.0.8"
+    tag: "0.0.9"
   #Settings determining how the scanner integrates with container manager
   scannerIntegration:
     #docker, containerd or autodetect (test containerd first, then Docker)
@@ -18,13 +18,17 @@ podScanner:
     potentialContainerDRuntimeTaskLocations: "/host/run/containerd/io.containerd.runtime.v2.task,/host/run/k3s/containerd/io.containerd.runtime.v2.task,/host/var/snap/microk8s/common/run/containerd/io.containerd.runtime.v2.task"
 vulnerabilityCoordinator:
   enabled: true
+  # Refresh the cache to ensure data consistency every 30 minutes
+  cacheRefreshMinuteInterval: 30
+  # Regenerate all vulnerability information every 6hrs, just in case there are new vulnerabilities
+  forceRescanMinuteInterval: 360
   image:
     repository: "bjornvb/k8s-scanner-vulnerability-coordinator"
     pullPolicy: "IfNotPresent"
-    tag: "0.0.8"
+    tag: "0.0.9"
 webFrontend:
   enabled: true
   image:
     repository: "bjornvb/k8s-scanner-web-frontend"
     pullPolicy: "IfNotPresent"
-    tag: "0.0.8"
+    tag: "0.0.9"
