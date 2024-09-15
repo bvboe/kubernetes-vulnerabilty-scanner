@@ -47,5 +47,6 @@ function addCellToRow(toRow, align, text) {
 const urlParams = new URLSearchParams(window.location.search);
 const namespace = urlParams.get('namespace');
 
-loadSBOMTable(namespace)
-loadNamespaceTable("sbom.html")
+loadSBOMTable(namespace);
+loadNamespaceTable("sbom.html", namespace);
+renderHeaderTable("sbom.html", namespace);

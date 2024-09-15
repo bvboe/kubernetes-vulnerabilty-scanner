@@ -50,5 +50,6 @@ function addCellToRow(toRow, align, text) {
 const urlParams = new URLSearchParams(window.location.search);
 const namespace = urlParams.get('namespace');
 
-loadCVEsTable(namespace)
-loadNamespaceTable("cves.html")
+loadCVEsTable(namespace);
+loadNamespaceTable("cves.html", namespace);
+renderHeaderTable("cves.html", namespace);

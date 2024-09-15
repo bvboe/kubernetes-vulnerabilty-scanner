@@ -36,10 +36,6 @@ async function loadContainerTable(selectedNamespace) {
             addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.low);
             addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.negligible);
             addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.unknown);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_status.fixed);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_status.not_fixed);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_status.wont_fix);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_status.unknown);
             addCellToRow(newRow, "right", item.vulnarbility_summary.number_of_packages);
         } else {
             newCell = addCellToRow(newRow, "left", "No Scan Information");
@@ -62,5 +58,6 @@ function addCellToRow(toRow, align, text) {
 const urlParams = new URLSearchParams(window.location.search);
 const namespace = urlParams.get('namespace');
 
-loadContainerTable(namespace)
-loadNamespaceTable("index.html")
+loadContainerTable(namespace);
+loadNamespaceTable("index.html", namespace);
+renderHeaderTable("index.html", namespace);
