@@ -26,11 +26,13 @@ function addNamespaceRow(tableBody, name, namespaceUrl, selectedNamespace, curre
     const newRow = document.createElement("tr");
     const cell = document.createElement("td");
     if(selectedNamespace == currentNamespace) {
-        headerType = "h2";
+        decorationFront="<u>"
+        decorationEnd="</u>"
     } else {
-        headerType = "h3";
+        decorationFront=""
+        decorationEnd=""
     }
-    cell.innerHTML = "<" + headerType + "><a href=\""+namespaceUrl+"\">" + name + "</a></" + headerType + ">"
+    cell.innerHTML = "<h2><a href=\""+namespaceUrl+"\">" + decorationFront + name + decorationEnd + "</a></h2>"
     newRow.appendChild(cell);
     tableBody.appendChild(newRow);
 }
@@ -43,11 +45,13 @@ function doRenderHeaderCell(tableRow, title, url, currentUrl, currentNamespace) 
         fullUrl = url + "?namespace=" + currentNamespace;
     }
     if(currentUrl == url) {
-        headerType = "h1";
+        decorationFront="<u>"
+        decorationEnd="</u>"
     } else {
-        headerType = "h2";
+        decorationFront=""
+        decorationEnd=""
     }
-    cell.innerHTML = "<" + headerType + "><a href=\"" + fullUrl + "\">" + title + "</a></" + headerType + ">";
+    cell.innerHTML = "<h1><a href=\"" + fullUrl + "\">" + decorationFront + title + decorationEnd + "</a></h1>";
     tableRow.appendChild(cell);
 }
 
