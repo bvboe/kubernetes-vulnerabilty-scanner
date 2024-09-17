@@ -34,4 +34,4 @@ COPY src/python/*.py ./
 COPY src/shell/* ./
 
 EXPOSE 8080
-ENTRYPOINT ["python", "-m", "gunicorn", "--timeout", "60", "-b", "0.0.0.0:8080", "app:app"]
+ENTRYPOINT ["python", "-m", "gunicorn", "--timeout", "600", "-b", "0.0.0.0:8080", "app:app"]
