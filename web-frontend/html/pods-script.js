@@ -29,18 +29,36 @@ async function loadPodsTable(selectedNamespace) {
         addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.pod_name + "</a");
         addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.container_name + "</a");
 
-        if(Object.keys(item.vulnarbility_summary).length > 0) {
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.critical);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.high);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.medium);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.low);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.negligible);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.unknown);
-            addCellToRow(newRow, "right", item.vulnarbility_summary.number_of_packages);
-        } else {
-            newCell = addCellToRow(newRow, "left", "No Scan Information");
-            newCell.colSpan = 11;
-        }
+        switch(item.scan_status) {
+            case "COMPLETE":
+                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.critical);
+                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.high);
+                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.medium);
+                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.low);
+                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.negligible);
+                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.unknown);
+                addCellToRow(newRow, "right", item.vulnarbility_summary.number_of_packages);
+                break;
+            case "SCANNING":
+                newCell = addCellToRow(newRow, "left", "Scanning");
+                newCell.colSpan = 11;
+                break;
+            case "TO_BE_SCANNED":
+                newCell = addCellToRow(newRow, "left", "To be scanned");
+                newCell.colSpan = 11;
+                break;
+            case "NO_SCAN_AVAILABLE":
+                newCell = addCellToRow(newRow, "left", "No scan information");
+                newCell.colSpan = 11;
+                break;
+            case "SCAN_FAILED":
+                newCell = addCellToRow(newRow, "left", "Scan failed");
+                newCell.colSpan = 11;
+                break;
+            default:
+              // code block
+          }
+
         // Append the new row to the table body
         tableBody.appendChild(newRow);
     });

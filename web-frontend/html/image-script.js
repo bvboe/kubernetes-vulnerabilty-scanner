@@ -5,6 +5,7 @@ async function loadImageSummary(imageid) {
         return;
     }
 
+    console.log("/api/image/summary?imageid=" + imageid);
     const response = await fetch("/api/image/summary?imageid=" + imageid);
     console.log("loadImageSummary() - Got data")
     // Check if the response is OK (status code 200)
@@ -27,6 +28,30 @@ async function loadImageSummary(imageid) {
         instanceString = instanceString + item.namespace + "." + item.pod_name + "." + item.container_name + "</br>";
     })
     document.querySelector("#instances").innerHTML = instanceString;
+
+    scan_status_description = "";
+    switch(data.scan_status) {
+        case "COMPLETE":
+            scan_status_description = "Complete";
+            break;
+        case "SCANNING":
+            scan_status_description = "Scanning";
+            break;
+        case "TO_BE_SCANNED":
+            scan_status_description = "To be scanned";
+            break;
+        case "NO_SCAN_AVAILABLE":
+            scan_status_description = "No scan information";
+            break;
+        case "SCAN_FAILED":
+            scan_status_description = "Scan failed";
+            break;
+        default:
+            scan_status_description = data.scan_status;
+            // code block
+      }
+
+    document.querySelector("#scan_status").innerHTML = scan_status_description;
 }
 
 async function loadCVEsTable(imageid) {
