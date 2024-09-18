@@ -52,24 +52,17 @@ async function loadImageSummary(imageid) {
       }
 
     document.querySelector("#scan_status").innerHTML = scan_status_description;
+
+    loadCVEsTable(imageid, data.scan_status);
+    loadSBOMTable(imageid, data.scan_status);
 }
 
-async function loadCVEsTable(imageid) {
+async function loadCVEsTable(imageid, scanStatus) {
     console.log("loadCVEsTable(" + imageid + ")");
     if(imageid == null) {
         console.log("No image, returning");
         return;
     }
-
-    const response = await fetch("/api/image/vulnerabilities?imageid=" + imageid);
-    console.log("loadCVEsTable() - Got data")
-    // Check if the response is OK (status code 200)
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-
-    // Parse the JSON data from the response
-    const data = await response.json();
 
     // Get the table body element where rows will be added
     const tableBody = document.querySelector("#cvesTable tbody");
@@ -77,39 +70,46 @@ async function loadCVEsTable(imageid) {
     //Clear the table
     tableBody.replaceChildren();
 
-    data.forEach(item => {
-        console.log(item)
-        // Create a new row
+    if(scanStatus == "COMPLETE") {
+        const response = await fetch("/api/image/vulnerabilities?imageid=" + imageid);
+        console.log("loadCVEsTable() - Got data")
+        // Check if the response is OK (status code 200)
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+    
+        // Parse the JSON data from the response
+        const data = await response.json();
+    
+        data.forEach(item => {
+            console.log(item)
+            // Create a new row
+            const newRow = document.createElement("tr");
+            addCellToRow(newRow, "left", item.vulnerability_severity);
+            addCellToRow(newRow, "left", item.vulnerability_id);
+            addCellToRow(newRow, "left", item.artifact_name);
+            addCellToRow(newRow, "left", item.artifact_version);
+            addCellToRow(newRow, "left", item.vulnerability_fix_versions);
+            addCellToRow(newRow, "left", item.vulnerability_fix_state);
+            addCellToRow(newRow, "left", item.artifact_type);
+    
+            // Append the new row to the table body
+            tableBody.appendChild(newRow);
+        });
+    } else {
         const newRow = document.createElement("tr");
-        addCellToRow(newRow, "left", item.vulnerability_severity);
-        addCellToRow(newRow, "left", item.vulnerability_id);
-        addCellToRow(newRow, "left", item.artifact_name);
-        addCellToRow(newRow, "left", item.artifact_version);
-        addCellToRow(newRow, "left", item.vulnerability_fix_versions);
-        addCellToRow(newRow, "left", item.vulnerability_fix_state);
-        addCellToRow(newRow, "left", item.artifact_type);
-
-        // Append the new row to the table body
+        const newCell = addCellToRow(newRow, "left", "Scan data missing");
+        newCell.colSpan = 7;
         tableBody.appendChild(newRow);
-    });
+    }
 }
 
-async function loadSBOMTable(imageid) {
+async function loadSBOMTable(imageid, scanStatus) {
     console.log("loadSBOMTable(" + imageid + ")");
     if(imageid == null) {
         console.log("No image, returning");
         return;
     }
-
-    const response = await fetch("/api/image/sbom?imageid=" + imageid);
-    console.log("loadSBOMTable() - Got data")
-    // Check if the response is OK (status code 200)
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-
-    // Parse the JSON data from the response
-    const data = await response.json();
 
     // Get the table body element where rows will be added
     const tableBody = document.querySelector("#sbomTable tbody");
@@ -117,17 +117,35 @@ async function loadSBOMTable(imageid) {
     //Clear the table
     tableBody.replaceChildren();
 
-    data.forEach(item => {
-        console.log(item)
-        // Create a new row
-        const newRow = document.createElement("tr");
-        addCellToRow(newRow, "left", item.name);
-        addCellToRow(newRow, "left", item.version);
-        addCellToRow(newRow, "left", item.type);
+    if(scanStatus == "COMPLETE") {
+        const response = await fetch("/api/image/sbom?imageid=" + imageid);
+        console.log("loadSBOMTable() - Got data")
+        // Check if the response is OK (status code 200)
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
 
-        // Append the new row to the table body
+        // Parse the JSON data from the response
+        const data = await response.json();
+
+
+        data.forEach(item => {
+            console.log(item)
+            // Create a new row
+            const newRow = document.createElement("tr");
+            addCellToRow(newRow, "left", item.name);
+            addCellToRow(newRow, "left", item.version);
+            addCellToRow(newRow, "left", item.type);
+
+            // Append the new row to the table body
+            tableBody.appendChild(newRow);
+        });
+    } else {
+        const newRow = document.createElement("tr");
+        const newCell = addCellToRow(newRow, "left", "SBOM missing");
+        newCell.colSpan = 3;
         tableBody.appendChild(newRow);
-    });
+    }
 }
 
 function addCellToRow(toRow, align, text) {
@@ -141,11 +159,15 @@ function addCellToRow(toRow, align, text) {
 function showVulnerabilityTable() {
     document.querySelector("#cvesTable").style.display = "table";
     document.querySelector("#sbomTable").style.display = "none";
+    document.querySelector("#cvesHeader").style.textDecoration = "underline";
+    document.querySelector("#sbomHeader").style.textDecoration = "none";
 }
 
 function showSBOMTable() {
     document.querySelector("#cvesTable").style.display = "none";
     document.querySelector("#sbomTable").style.display = "table";
+    document.querySelector("#cvesHeader").style.textDecoration = "none";
+    document.querySelector("#sbomHeader").style.textDecoration = "underline";
 }
 
 
@@ -154,5 +176,3 @@ const urlParams = new URLSearchParams(window.location.search);
 const imageid = urlParams.get('imageid');
 
 loadImageSummary(imageid);
-loadCVEsTable(imageid);
-loadSBOMTable(imageid);
