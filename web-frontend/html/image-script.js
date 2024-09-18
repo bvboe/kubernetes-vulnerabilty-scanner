@@ -98,7 +98,7 @@ async function loadCVEsTable(imageid, scanStatus) {
         });
     } else {
         const newRow = document.createElement("tr");
-        const newCell = addCellToRow(newRow, "left", "Scan data missing");
+        const newCell = addCellToRow(newRow, "left", "Vulnerability data missing");
         newCell.colSpan = 7;
         tableBody.appendChild(newRow);
     }
