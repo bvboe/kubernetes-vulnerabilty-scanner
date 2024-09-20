@@ -43,6 +43,15 @@ function addCellToRow(toRow, align, text) {
     return cell;
 }
 
+function initCsvLink(selectedNamespace) {
+    const csvLink = document.getElementById("csvlink");
+    if(selectedNamespace !== null) {
+        csvLink.href = "/api/sbomsummary?output=csv&namespace=" + selectedNamespace;
+    } else {
+        csvLink.href = "/api/sbomsummary?output=csv";
+    }
+}
+
 
 const urlParams = new URLSearchParams(window.location.search);
 const namespace = urlParams.get('namespace');
@@ -50,3 +59,4 @@ const namespace = urlParams.get('namespace');
 loadSBOMTable(namespace);
 loadNamespaceTable("sbom.html", namespace);
 renderHeaderTable("sbom.html", namespace);
+initCsvLink(namespace);

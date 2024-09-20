@@ -72,9 +72,19 @@ function addCellToRow(toRow, align, text) {
     return cell;
 }
 
+function initCsvLink(selectedNamespace) {
+    const csvLink = document.getElementById("csvlink");
+    if(selectedNamespace !== null) {
+        csvLink.href = "/api/podsummary?output=csv&namespace=" + selectedNamespace;
+    } else {
+        csvLink.href = "/api/podsummary?output=csv";
+    }
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 const namespace = urlParams.get('namespace');
 
 loadPodsTable(namespace);
 loadNamespaceTable("pods.html", namespace);
 renderHeaderTable("pods.html", namespace);
+initCsvLink(namespace);

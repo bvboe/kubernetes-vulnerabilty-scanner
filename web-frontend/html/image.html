@@ -49,33 +49,38 @@
                     <table valign="top" class="summaryTable">
                         <tr>
                             <td>
-                                <table id="cvesTable" class="listingTable" style="display: table;">
-                                    <thead>
-                                        <tr>
-                                            <th><b>Severity</b></th>
-                                            <th><b>Vulnerability</b></th>
-                                            <th><b>Name</b></th>
-                                            <th><b>Installed</b></th>
-                                            <th><b>Fixed In</b></th>
-                                            <th><b>Status</b></th>
-                                            <th><b>Type</b></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            
-                                <table id="sbomTable" class="listingTable" style="display: none;">
-                                    <thead>
-                                        <tr>
-                                            <th><b>Name</b></th>
-                                            <th><b>Version</b></th>
-                                            <th><b>Type</b></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                                <div id="cvesSection" style="display: block;">
+                                    <div style="text-align: right; text-decoration: underline;"><b><a href="" id="cvecsvlink">Export to CSV</a></b></div>
+                                    <table id="cvesTable" class="listingTable">
+                                        <thead>
+                                            <tr>
+                                                <th><b>Severity</b></th>
+                                                <th><b>Vulnerability</b></th>
+                                                <th><b>Name</b></th>
+                                                <th><b>Installed</b></th>
+                                                <th><b>Fixed In</b></th>
+                                                <th><b>Status</b></th>
+                                                <th><b>Type</b></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="sbomSection" style="display: none;">
+                                    <div style="text-align: right; text-decoration: underline;"><b><a href="" id="sbomcsvlink">Export to CSV</a></b></div>
+                                    <table id="sbomTable" class="listingTable">
+                                        <thead>
+                                            <tr>
+                                                <th><b>Name</b></th>
+                                                <th><b>Version</b></th>
+                                                <th><b>Type</b></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </td>
                         </tr>
                     </table>

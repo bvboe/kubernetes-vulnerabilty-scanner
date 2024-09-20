@@ -157,22 +157,22 @@ function addCellToRow(toRow, align, text) {
 }
 
 function showVulnerabilityTable() {
-    document.querySelector("#cvesTable").style.display = "table";
-    document.querySelector("#sbomTable").style.display = "none";
+    document.querySelector("#cvesSection").style.display = "block";
+    document.querySelector("#sbomSection").style.display = "none";
     document.querySelector("#cvesHeader").style.textDecoration = "underline";
     document.querySelector("#sbomHeader").style.textDecoration = "none";
 }
 
 function showSBOMTable() {
-    document.querySelector("#cvesTable").style.display = "none";
-    document.querySelector("#sbomTable").style.display = "table";
+    document.querySelector("#cvesSection").style.display = "none";
+    document.querySelector("#sbomSection").style.display = "block";
     document.querySelector("#cvesHeader").style.textDecoration = "none";
     document.querySelector("#sbomHeader").style.textDecoration = "underline";
 }
-
-
 
 const urlParams = new URLSearchParams(window.location.search);
 const imageid = urlParams.get('imageid');
 
 loadImageSummary(imageid);
+document.getElementById("cvecsvlink").href = "/api/image/vulnerabilities?output=csv&imageid=" + imageid;
+document.getElementById("sbomcsvlink").href = "/api/image/sbom?output=csv&imageid=" + imageid;
