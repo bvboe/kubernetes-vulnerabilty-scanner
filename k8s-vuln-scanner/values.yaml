@@ -3,7 +3,7 @@ podScanner:
   image:
     repository: "bjornvb/k8s-pod-scanner"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.2"
+    tag: "0.1.3"
   #Settings determining how the scanner integrates with container manager
   scannerIntegration:
     #docker, containerd or autodetect (test containerd first, then Docker)
@@ -25,10 +25,10 @@ vulnerabilityCoordinator:
   image:
     repository: "bjornvb/k8s-scanner-vulnerability-coordinator"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.2"
+    tag: "0.1.3"
 webFrontend:
   enabled: true
   image:
     repository: "bjornvb/k8s-scanner-web-frontend"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.2"
+    tag: "0.1.3"
