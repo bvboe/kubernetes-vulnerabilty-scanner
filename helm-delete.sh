@@ -1,1 +1,1 @@
-helm delete k8s-scanner
+helm delete k8s-scanner --wait
