@@ -1,4 +1,5 @@
-from flask import Flask, request
+from kubernetes import client, config, watch
+from flask import Flask, request, jsonify
 import os
 import json
 import subprocess
@@ -8,29 +9,51 @@ NODE_NAME=os.getenv("NODE_NAME")
 POD_NAME=os.getenv("POD_NAME")
 POD_NAMESPACE=os.getenv("POD_NAMESPACE")
 POD_IP=os.getenv("POD_IP")
-CONTAINER_MANAGER = os.getenv("CONTAINER_MANAGER")
 POTENTIAL_DOCKER_SOCKET_LOCATIONS = os.getenv("POTENTIAL_DOCKER_SOCKET_LOCATIONS")
-POTENTIAL_CONTAINERD_SOCKET_LOCATIONS = os.getenv("POTENTIAL_CONTAINERD_SOCKET_LOCATIONS")
-POTENTIAL_CONTAINERD_NAMESPACES = os.getenv("POTENTIAL_CONTAINERD_NAMESPACES")
-POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS = os.getenv("POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS")
+POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS = os.getenv("POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS")
+HOST_CONFIGURATION = None
 
 print(f"Starting app on node {NODE_NAME}")
 print(f"NODE_NAME {NODE_NAME}")
 print(f"POD_NAME {POD_NAME}")
 print(f"POD_NAMESPACE {POD_NAMESPACE}")
 print(f"POD_IP {POD_IP}")
-print(f"CONTAINER_MANAGER {CONTAINER_MANAGER}")
 print(f"POTENTIAL_DOCKER_SOCKET_LOCATIONS {POTENTIAL_DOCKER_SOCKET_LOCATIONS}")
-print(f"POTENTIAL_CONTAINERD_SOCKET_LOCATIONS {POTENTIAL_CONTAINERD_SOCKET_LOCATIONS}")
-print(f"POTENTIAL_CONTAINERD_NAMESPACES {POTENTIAL_CONTAINERD_NAMESPACES}")
+print(f"POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS {POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS}")
+
+def get_container_runtime():
+    print("get_container_runtime()")
+    config.load_incluster_config()
+    v1 = client.CoreV1Api()
+    nodes = v1.list_node()
+
+    for node in nodes.items:
+        node_name = node.metadata.name
+        if node_name == NODE_NAME:
+            print(f"Found {node.status.node_info.container_runtime_version}")
+            return node.status.node_info.container_runtime_version
+    
+    return None
 
 def get_host_configuration():
     print("get_host_configuration()")
-    conig_file_location = "/tmp/scanner-configuration.json"
-    result = subprocess.run(["./check-environment.sh", conig_file_location, CONTAINER_MANAGER, POTENTIAL_DOCKER_SOCKET_LOCATIONS, POTENTIAL_CONTAINERD_SOCKET_LOCATIONS, POTENTIAL_CONTAINERD_NAMESPACES, POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
-    print(result.stdout)
+    container_runtime = get_container_runtime()
+    config_file_location = "/tmp/scanner-configuration.json"
+    console_out = None
 
-    with open(conig_file_location, 'r') as file:
+    if container_runtime.startswith("containerd"):
+        print("Loading ContainerD runtime configuration")
+        console_out = subprocess.run(["./containerd-check-environment.sh", config_file_location, POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
+    elif container_runtime.startswith("docker"):
+        print("Loading Docker runtime configuration")
+        console_out = subprocess.run(["./docker-check-environment.sh", config_file_location, POTENTIAL_DOCKER_SOCKET_LOCATIONS], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
+    else:
+        print(f"ERROR - Unknown runtime {container_runtime}")
+        return None
+
+    print(console_out.stdout)
+
+    with open(config_file_location, 'r') as file:
         scanner_configuration = file.read()
         print(scanner_configuration)
         return json.loads(scanner_configuration)
@@ -40,10 +63,29 @@ print(f"Current host configuration: {HOST_CONFIGURATION}")
 
 app = Flask(__name__)
 
+def is_ready():
+    if HOST_CONFIGURATION is None:
+        return False
+    else:
+        return True
+
+@app.route('/health')
+def health_check():
+    if is_ready():
+        return jsonify({"status": "healthy"}), 200
+    else:
+        return jsonify({"status": "not ready"}), 400
+
 @app.route("/hello")
 def sayHello():
+    status = None
+    if is_ready():
+        status = "ready"
+    else:
+        status = "not ready"
+
     result = {
-        "result": "success",
+        "status": status,
         "node_name": NODE_NAME,
         "pod_ip": POD_IP
     }
@@ -67,7 +109,11 @@ def get_sbom():
     print(f"image: {image}")
     print(f"image_id: {image_id}")
     print(f"container_id: {container_id}")
-    image_sha = image.split(":")[0] + "@" + image_id
+    if "@" in image:
+        image_sha = image
+    else:
+        image_sha = image.split(":")[0] + "@" + image_id
+    print(f"image_sha: {image_sha}")
 
     if HOST_CONFIGURATION['runtime'] == "docker":
         print("Do Docker based scan")
@@ -80,11 +126,8 @@ def get_sbom():
             return {"result": "fail"}
     elif HOST_CONFIGURATION['runtime'] == "containerd":
         print("Do Containerd based scan")
-        containerd_address = HOST_CONFIGURATION['CONTAINERD_ADDRESS']
-        containerd_namespace = HOST_CONFIGURATION['CONTAINERD_NAMESPACE']
-        containerd_runtime_task_location = HOST_CONFIGURATION['CONTAINERD_RUNTIME_TASK_LOCATION']
-        create_sbom(["./containerd-filesystem-sbom.sh", containerd_runtime_task_location, container_id, image, sbom_file])
-#        create_sbom(["./containerd-containerfile-sbom.sh", containerd_address, containerd_namespace, sbom_file, image_sha, image, image_id])
+        containerd_snapshot_folder = HOST_CONFIGURATION['CONTAINERD_SNAPSHOT_LOCATION']
+        create_sbom(["./containerd-filesystem-sbom.sh", container_id, image, containerd_snapshot_folder, sbom_file])
         sbom = load_sbom(sbom_file)
         if sbom:
             return {"result": "success", "sbom": sbom}

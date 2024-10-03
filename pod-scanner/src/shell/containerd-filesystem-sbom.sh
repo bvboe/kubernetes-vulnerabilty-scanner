@@ -1,14 +1,14 @@
 #!/bin/bash
-CONTAINERD_RUNTIME_TASK_DIR=${1}
-CONTAINER_ID=${2}
-IMAGE=${3}
+CONTAINER_ID=${1}
+IMAGE=${2}
+SNAPSHOT_FOLDER=${3}
 OUTPUT_FILE=${4}
 
 echo "./containerd-filesystem-sbom.sh \"${1}\" \"${2}\" \"${3}\" \"${4}\""
 
-echo CONTAINERD_RUNTIME_TASK_DIR: $CONTAINERD_RUNTIME_TASK_DIR
 echo CONTAINER_ID: $CONTAINER_ID
 echo IMAGE: $IMAGE
+echo SNAPSHOT_FOLDER: $SNAPSHOT_FOLDER
 echo OUTPUT_FILE: $OUTPUT_FILE
 
 cleaned_container_id="${CONTAINER_ID#containerd://}"
@@ -35,11 +35,17 @@ mkdir tmpcontainer
 
 IFS=':' read -ra paths <<< "$lower_dir_path" # Split the string into an array
 for (( idx=${#paths[@]}-1 ; idx>=0 ; idx-- )); do
-    tmp_path="/host${paths[idx]}"
+    host_path=${paths[idx]}
+    echo "$host_path"
+    tmp_path="/host${host_path}"
+    if [ ! -d "$tmp_path" ]; then
+      #Directory doesn't exist, try with snapshot folder
+      tmp_path="${SNAPSHOT_FOLDER}/${host_path}"
+    fi
+
     echo Copying $tmp_path to folder
     cp -rf $tmp_path tmpcontainer
 done
-
 syft dir:tmpcontainer/fs --source-name "${SOURCE_NAME}" --source-version "${SOURCE_VERSION}" -o json > $OUTPUT_FILE
 echo Result written to $OUTPUT_FILE
 rm -rf tmpcontainer

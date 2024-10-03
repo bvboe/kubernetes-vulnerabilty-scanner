@@ -19,16 +19,10 @@ spec:
         image: {{ .Values.podScanner.image.repository }}:{{ .Values.podScanner.image.tag }}
         imagePullPolicy: {{ .Values.podScanner.image.pullPolicy }}
         env:
-        - name: CONTAINER_MANAGER
-          value: {{ .Values.podScanner.scannerIntegration.containerManager }}
         - name: POTENTIAL_DOCKER_SOCKET_LOCATIONS
           value: {{ .Values.podScanner.scannerIntegration.potentialDockerSocketLocations }}
-        - name: POTENTIAL_CONTAINERD_NAMESPACES
-          value: {{ .Values.podScanner.scannerIntegration.potentialContainerDNamespaces }}
-        - name: POTENTIAL_CONTAINERD_SOCKET_LOCATIONS
-          value: {{ .Values.podScanner.scannerIntegration.potentialContainerDSocketLocations }}
-        - name: POTENTIAL_CONTAINERD_RUNTIME_TASK_LOCATIONS
-          value: {{ .Values.podScanner.scannerIntegration.potentialContainerDRuntimeTaskLocations }}
+        - name: POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS
+          value: {{ .Values.podScanner.scannerIntegration.potentialContainerDSnapshotLocations }}
         - name: NODE_NAME
           valueFrom:
             fieldRef:
@@ -55,6 +49,13 @@ spec:
         - name: hostmounts
           mountPath: /host/mounts
           readOnly: true
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          failureThreshold: 10
       volumes:
       - name: hostvar
         hostPath:
