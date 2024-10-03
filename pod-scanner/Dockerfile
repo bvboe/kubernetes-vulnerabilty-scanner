@@ -1,8 +1,3 @@
-#FROM cgr.dev/chainguard/go:latest AS gobuilder
-#WORKDIR /workdir
-#RUN go install go.etcd.io/bbolt/cmd/bbolt@latest
-#RUN go install github.com/br0xen/boltbrowser@latest
-
 FROM cgr.dev/chainguard/python:latest-dev AS builder
 ENV LANG=C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -29,7 +24,6 @@ ENV PATH="/flask-app/venv/bin":$PATH
 WORKDIR /flask-app
 
 COPY --from=builder /flask-app/venv /flask-app/venv
-#COPY --from=gobuilder /root/go/bin/ /bin/
 COPY src/python/*.py ./
 COPY src/shell/* ./
 
