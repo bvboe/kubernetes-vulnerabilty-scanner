@@ -4,6 +4,7 @@ import os
 import json
 import subprocess
 import ast
+import threading
 
 NODE_NAME=os.getenv("NODE_NAME")
 POD_NAME=os.getenv("POD_NAME")
@@ -12,6 +13,7 @@ POD_IP=os.getenv("POD_IP")
 POTENTIAL_DOCKER_SOCKET_LOCATIONS = os.getenv("POTENTIAL_DOCKER_SOCKET_LOCATIONS")
 POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS = os.getenv("POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS")
 HOST_CONFIGURATION = None
+GET_SBOM_LOCK = threading.Lock()
 
 print(f"Starting app on node {NODE_NAME}")
 print(f"NODE_NAME {NODE_NAME}")
@@ -115,27 +117,31 @@ def get_sbom():
         image_sha = image.split(":")[0] + "@" + image_id
     print(f"image_sha: {image_sha}")
 
-    if HOST_CONFIGURATION['runtime'] == "docker":
-        print("Do Docker based scan")
-        docker_host = HOST_CONFIGURATION['DOCKER_HOST']
-        create_sbom(["./docker-sbom.sh", docker_host, sbom_file, image_sha])
-        sbom = load_sbom(sbom_file)
-        if sbom:
-            return {"result": "success", "sbom": sbom}
+    # This function is currently designed to only handle one call at the time
+    # which is also the way the vulnerability coordinator works
+    # The lock is just a safety feature
+    with GET_SBOM_LOCK:
+        if HOST_CONFIGURATION['runtime'] == "docker":
+            print("Do Docker based scan")
+            docker_host = HOST_CONFIGURATION['DOCKER_HOST']
+            create_sbom(["./docker-sbom.sh", docker_host, sbom_file, image_sha])
+            sbom = load_sbom(sbom_file)
+            if sbom:
+                return {"result": "success", "sbom": sbom}
+            else:
+                return {"result": "fail"}
+        elif HOST_CONFIGURATION['runtime'] == "containerd":
+            print("Do Containerd based scan")
+            containerd_snapshot_folder = HOST_CONFIGURATION['CONTAINERD_SNAPSHOT_LOCATION']
+            create_sbom(["./containerd-filesystem-sbom.sh", container_id, image, containerd_snapshot_folder, sbom_file])
+            sbom = load_sbom(sbom_file)
+            if sbom:
+                return {"result": "success", "sbom": sbom}
+            else:
+                return {"result": "fail"}
         else:
+            print(f"Invalid configuration - {HOST_CONFIGURATION}, returning none")
             return {"result": "fail"}
-    elif HOST_CONFIGURATION['runtime'] == "containerd":
-        print("Do Containerd based scan")
-        containerd_snapshot_folder = HOST_CONFIGURATION['CONTAINERD_SNAPSHOT_LOCATION']
-        create_sbom(["./containerd-filesystem-sbom.sh", container_id, image, containerd_snapshot_folder, sbom_file])
-        sbom = load_sbom(sbom_file)
-        if sbom:
-            return {"result": "success", "sbom": sbom}
-        else:
-            return {"result": "fail"}
-    else:
-        print(f"Invalid configuration - {HOST_CONFIGURATION}, returning none")
-        return {"result": "fail"}
 
 def load_sbom(file_path):
     print(f"load_sbom({file_path})")
