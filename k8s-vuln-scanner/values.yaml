@@ -4,7 +4,7 @@ podScanner:
   image:
     repository: "bjornvb/k8s-pod-scanner"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.20"
+    tag: "0.1.21"
   #Settings determining how the scanner integrates with container manager
   scannerIntegration:
     #Comma-separated list of potential places the docer socket could be on the scanner container.
@@ -20,10 +20,10 @@ vulnerabilityCoordinator:
   image:
     repository: "bjornvb/k8s-scanner-vulnerability-coordinator"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.20"
+    tag: "0.1.21"
 webFrontend:
   enabled: true
   image:
     repository: "bjornvb/k8s-scanner-web-frontend"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.20"
+    tag: "0.1.21"
