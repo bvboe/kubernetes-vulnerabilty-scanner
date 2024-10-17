@@ -18,6 +18,10 @@ spec:
       - name: pod-scanner
         image: {{ .Values.podScanner.image.repository }}:{{ .Values.podScanner.image.tag }}
         imagePullPolicy: {{ .Values.podScanner.image.pullPolicy }}
+        resources:
+          requests:
+            memory: "2048Mi"
+            cpu: "1000m"
         env:
         - name: POTENTIAL_DOCKER_SOCKET_LOCATIONS
           value: {{ .Values.podScanner.scannerIntegration.potentialDockerSocketLocations }}

@@ -158,7 +158,8 @@ def create_sbom(sbom_call):
     print(f"create_sbom({sbom_call})")
 
     try:
-        result = subprocess.run(sbom_call, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True, timeout=120)
+        result = subprocess.run(sbom_call, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
+        #result = subprocess.run(sbom_call, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True, timeout=120)
         print(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Command failed with return code {e.returncode}")

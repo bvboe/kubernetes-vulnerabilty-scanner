@@ -19,6 +19,10 @@ spec:
       - name: nginx
         image: {{ .Values.webFrontend.image.repository }}:{{ .Values.webFrontend.image.tag }}
         imagePullPolicy: {{ .Values.webFrontend.image.pullPolicy }}
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
 
 ---
 apiVersion: v1
