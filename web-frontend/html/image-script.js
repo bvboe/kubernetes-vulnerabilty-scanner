@@ -1,12 +1,12 @@
-async function loadImageSummary(imageid) {
-    console.log("loadImageSummary(" + imageid + ")");
+async function loadImageDetails(imageid) {
+    console.log("loadImageDetails(" + imageid + ")");
     if(imageid == null) {
         console.log("No image, returning");
         return;
     }
 
-    console.log("/api/image/summary?imageid=" + imageid);
-    const response = await fetch("/api/image/summary?imageid=" + imageid);
+    console.log("/api/image/details?imageid=" + imageid);
+    const response = await fetch("/api/image/details?imageid=" + imageid);
     console.log("loadImageSummary() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
@@ -176,6 +176,6 @@ function showSBOMTable() {
 const urlParams = new URLSearchParams(window.location.search);
 const imageid = urlParams.get('imageid');
 
-loadImageSummary(imageid);
+loadImageDetails(imageid);
 document.getElementById("cvecsvlink").href = "/api/image/vulnerabilities?output=csv&imageid=" + imageid;
 document.getElementById("sbomcsvlink").href = "/api/image/sbom?output=csv&imageid=" + imageid;

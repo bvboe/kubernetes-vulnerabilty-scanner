@@ -57,21 +57,8 @@ function doRenderHeaderCell(tableRow, title, url, currentUrl, currentNamespace) 
 
 async function renderHeaderTable(currentUrl, currentNamespace) {
     const tableRow = document.querySelector("#headerRow")
-/*
-    console.log("renderHeaderTable(...)")
-    const response = await fetch("/api/clustername");
-    console.log("renderHeaderTable() - Got data")
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-    const clusterName = await response.text();
-
-    const tableRow = document.querySelector("#headerRow")
-    const cell = document.createElement("td");
-    cell.innerHTML = "<h1>" + clusterName + ":</h1>"
-    tableRow.appendChild(cell);
-*/
-    doRenderHeaderCell(tableRow, "Container Images", "index.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableRow, "Summary", "index.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableRow, "Images", "images.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "Pods", "pods.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "CVEs", "cves.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "SBOM", "sbom.html", currentUrl, currentNamespace);

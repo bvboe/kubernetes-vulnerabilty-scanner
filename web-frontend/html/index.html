@@ -27,14 +27,39 @@
                     </table>
                 </td>
                 <td width="100%" valign="top">
-                    <div style="text-align: right; text-decoration: underline;"><b><a href="" id="csvlink">Export to CSV</a></b></div>
-                    <table id="vulnerabilityTable" width="100%" class="listingTable">
+
+                    <h3>Summary by Namespace</h3>
+                    <div style="text-align: right; text-decoration: underline;"><b><a href="" id="namespaceCsvlink">Export to CSV</a></b></div>
+                    <table id="namespaceSummaryTable" width="100%" class="listingTable">
                         <thead>
                             <tr>
-                                <th rowspan="2"><b>Container Image</b></th>
+                                <th rowspan="2"><b>Namespace</b></th>
                                 <th rowspan="2"><b># Instances</b></th>
-                                <th colspan="6"><b>Vulnerabilities</b></th>
-                                <th rowspan="2"><b># Packages</b></th>
+                                <th rowspan="2"><b># Not Scanned</b></th>
+                                <th colspan="6"><b>Average # Vulnerabilities Per Container Instance</b></th>
+                                <th rowspan="2"><b>Average # Packages</b></th>
+                            </tr>
+                            <tr>
+                                <th><b>Critical</b></th>
+                                <th><b>High</b></th>
+                                <th><b>Medium</b></th>
+                                <th><b>Low</b></th>
+                                <th><b>Negligible</b></th>
+                                <th><b>Unknown</b></th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                    </table>
+                    <br/>
+                    <h3>Summary by Linux Distribution</h3>
+                    <div style="text-align: right; text-decoration: underline;"><b><a href="" id="distroCsvlink">Export to CSV</a></b></div>
+                    <table id="distroSummaryTable" width="100%" class="listingTable">
+                        <thead>
+                            <tr>
+                                <th rowspan="2"><b>Container OS</b></th>
+                                <th rowspan="2"><b># Instances</b></th>
+                                <th colspan="6"><b>Average # Vulnerabilities Per Container Instance</b></th>
+                                <th rowspan="2"><b>Average # Packages</b></th>
                             </tr>
                             <tr>
                                 <th><b>Critical</b></th>
