@@ -88,7 +88,7 @@ async function loadDistroTable(selectedNamespace) {
         // Create a new row
         const newRow = document.createElement("tr");
         const scannedContainers = item.scanned_containers;
-        addCellToRow(newRow, "left", formatNumber(item.distro_name));
+        addCellToRow(newRow, "left", item.distro_name + " (" + item.distro_id + ")");
         addCellToRow(newRow, "right", formatNumber(scannedContainers));
         addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_critical, scannedContainers), 2));
         addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_high, scannedContainers), 2));
