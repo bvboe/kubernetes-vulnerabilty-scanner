@@ -46,6 +46,7 @@ for (( idx=${#paths[@]}-1 ; idx>=0 ; idx-- )); do
     echo Copying $tmp_path to folder
     cp -rf $tmp_path tmpcontainer
 done
+echo Start generating SBOM
 syft dir:tmpcontainer/fs --source-name "${SOURCE_NAME}" --source-version "${SOURCE_VERSION}" -o json > $OUTPUT_FILE
 echo Result written to $OUTPUT_FILE
 rm -rf tmpcontainer
