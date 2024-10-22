@@ -116,3 +116,17 @@ $ helm delete k8s-monitoring k8s-scanner
 release "k8s-monitoring" uninstalled
 release "k8s-scanner" uninstalled
 ```
+
+## Troubleshooting and Testing
+The scanner is designed to work with Kubernetes running on Docker and ContainerD, and has been tested on the following Kubernetes distributions:
+* Amazon Elastic Kubernetes Service (EKS)
+* Google Kubernetes Engine (GKE)
+* K3s
+* MicroK8s
+* Kubeadm on ContainerD
+* Minikube
+* Kind
+
+The scanner is currently not integrated with CRI-O.
+
+The scanner will also require read-only access to the host operating system and leverages a Persistent Volume Claim for caching scan results. The use of a Persistent Volume Claim can be disabled by adding `--set vulnerabilityCoordinator.externalStorage=false` to the helm installation command.
