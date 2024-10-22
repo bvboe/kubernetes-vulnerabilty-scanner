@@ -32,7 +32,7 @@ async function loadCVEsTable(selectedNamespace) {
         addCellToRow(newRow, "left", item.vulnerability_fix_versions);
         addCellToRow(newRow, "left", item.vulnerability_fix_state);
         addCellToRow(newRow, "left", item.artifact_type);
-        addCellToRow(newRow, "right", item.image_count);
+        addCellToRow(newRow, "right", formatNumber(item.image_count));
 
         // Append the new row to the table body
         tableBody.appendChild(newRow);

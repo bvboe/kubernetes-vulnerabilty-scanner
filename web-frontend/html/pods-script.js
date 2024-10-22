@@ -31,13 +31,13 @@ async function loadPodsTable(selectedNamespace) {
 
         switch(item.scan_status) {
             case "COMPLETE":
-                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.critical);
-                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.high);
-                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.medium);
-                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.low);
-                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.negligible);
-                addCellToRow(newRow, "right", item.vulnarbility_summary.by_severity.unknown);
-                addCellToRow(newRow, "right", item.vulnarbility_summary.number_of_packages);
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.critical));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.high));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.medium));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.low));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.negligible));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.unknown));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.number_of_packages));
                 break;
             case "SCANNING":
                 newCell = addCellToRow(newRow, "left", "Scanning");

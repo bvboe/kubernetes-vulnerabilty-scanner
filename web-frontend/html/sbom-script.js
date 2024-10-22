@@ -28,7 +28,7 @@ async function loadSBOMTable(selectedNamespace) {
         addCellToRow(newRow, "left", item.name);
         addCellToRow(newRow, "left", item.version);
         addCellToRow(newRow, "left", item.type);
-        addCellToRow(newRow, "right", item.image_count);
+        addCellToRow(newRow, "right", formatNumber(item.image_count));
 
         // Append the new row to the table body
         tableBody.appendChild(newRow);

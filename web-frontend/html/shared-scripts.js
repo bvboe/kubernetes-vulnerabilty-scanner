@@ -63,3 +63,7 @@ async function renderHeaderTable(currentUrl, currentNamespace) {
     doRenderHeaderCell(tableRow, "CVEs", "cves.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "SBOM", "sbom.html", currentUrl, currentNamespace);
 }
+
+function formatNumber(num, digits = 0) {
+    return num.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}

@@ -6,10 +6,6 @@ function calculateAveragePerContainer(total, numberOfContainers) {
     }
 }
 
-function formatNumber(num, digits) {
-    return num.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
-}
-
 async function loadNamespaceSummaryTable(selectedNamespace) {
     console.log("loadNamespaceSummaryTable(" + selectedNamespace + ")");
     namespaceString="";
@@ -33,25 +29,33 @@ async function loadNamespaceSummaryTable(selectedNamespace) {
     //Clear the table
     tableBody.replaceChildren();
 
+    rowCounter = 0;
     data.forEach(item => {
+        rowCounter++;
         console.log(item)
         // Create a new row
         const newRow = document.createElement("tr");
-        const scannedImages = item.scanned_images;
+        const scannedContainers = item.scanned_containers;
         addCellToRow(newRow, "left", item.namespace);
-        addCellToRow(newRow, "right", formatNumber(scannedImages, 0));
-        addCellToRow(newRow, "right", formatNumber(item.not_scanned_images, 0));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_critical, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_high, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_medium, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_low, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_negligible, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_unknown, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.number_of_packages, scannedImages), 2));
+        addCellToRow(newRow, "right", formatNumber(scannedContainers));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_critical, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_high, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_medium, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_low, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_negligible, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_unknown, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.number_of_packages, scannedContainers), 0));
 
         // Append the new row to the table body
         tableBody.appendChild(newRow);
     });
+
+    if(rowCounter == 0) {
+        const newRow = document.createElement("tr");
+        const newCell = addCellToRow(newRow, "left", "No Data Available");
+        newCell.colSpan = 9;
+        tableBody.appendChild(newRow);
+    }
 }
 
 async function loadDistroTable(selectedNamespace) {
@@ -77,31 +81,82 @@ async function loadDistroTable(selectedNamespace) {
     //Clear the table
     tableBody.replaceChildren();
 
+    rowCounter = 0;
     data.forEach(item => {
+        rowCounter++;
         console.log(item)
         // Create a new row
         const newRow = document.createElement("tr");
-
-        const scannedImages = item.scanned_images;
-        addCellToRow(newRow, "left", formatNumber(item.distro_name, 0));
-        addCellToRow(newRow, "right", formatNumber(scannedImages, 0));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_critical, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_high, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_medium, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_low, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_negligible, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_unknown, scannedImages), 2));
-        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.number_of_packages, scannedImages), 2));
+        const scannedContainers = item.scanned_containers;
+        addCellToRow(newRow, "left", formatNumber(item.distro_name));
+        addCellToRow(newRow, "right", formatNumber(scannedContainers));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_critical, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_high, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_medium, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_low, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_negligible, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_unknown, scannedContainers), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.number_of_packages, scannedContainers), 0));
           
         // Append the new row to the table body
         tableBody.appendChild(newRow);
     });
+
+    if(rowCounter == 0) {
+        const newRow = document.createElement("tr");
+        const newCell = addCellToRow(newRow, "left", "No Data Available");
+        newCell.colSpan = 9;
+        tableBody.appendChild(newRow);
+    }
+}
+
+async function loadScanStatus(selectedNamespace) {
+    console.log("loadScanStatus(" + selectedNamespace + ")");
+    namespaceString="";
+    if(selectedNamespace !== null) {
+        console.log("Namespace is set");
+        namespaceString = "?namespace="+selectedNamespace;
+    }
+    const response = await fetch("/api/image/scanstatus" + namespaceString);
+    console.log("loadScanStatus() - Got data")
+    // Check if the response is OK (status code 200)
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+
+    // Parse the JSON data from the response
+    const data = await response.json();
+
+    // Get the table body element where rows will be added
+    const tableBody = document.querySelector("#containerScanStatus tbody");
+    tableBody.replaceChildren();
+
+    addStatusTableRow(tableBody, "Scanning", data.SCANNING);
+    addStatusTableRow(tableBody, "To Be Scanned", data.TO_BE_SCANNED);
+    addStatusTableRow(tableBody, "Successfully Scanned", data.COMPLETE);
+    addStatusTableRow(tableBody, "Failed", data.SCAN_FAILED);
+    addStatusTableRow(tableBody, "Missing Scan Information", data.NO_SCAN_AVAILABLE);
+}
+
+function addStatusTableRow(tableBody, status, count) {
+    if(count == 0) {
+        return;
+    }
+    const newRow = document.createElement("tr");
+    const statusCell = document.createElement("td");
+    statusCell.innerHTML = "<b>" + status + "</b>"
+    newRow.appendChild(statusCell);
+    const countCell = document.createElement("td");
+    countCell.innerHTML = formatNumber(count);
+    countCell.textAlign = "right";
+    newRow.appendChild(countCell);
+    tableBody.appendChild(newRow);
 }
 
 function addCellToRow(toRow, align, text) {
     const cell = document.createElement("td");
     cell.innerHTML = text;
-    cell.style.textAlign=align;
+    cell.style.textAlign = align;
     toRow.appendChild(cell);
     return cell;
 }
@@ -123,6 +178,7 @@ const namespace = urlParams.get('namespace');
 
 loadNamespaceSummaryTable(namespace);
 loadDistroTable(namespace);
+loadScanStatus(namespace);
 loadNamespaceTable("index.html", namespace);
 renderHeaderTable("index.html", namespace);
 initCsvLink(namespace);
