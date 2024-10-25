@@ -44,14 +44,11 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         volumeMounts:
-        - name: hostvar
-          mountPath: /host/var
-          readOnly: true
-        - name: hostrun
-          mountPath: /host/run
+        - name: hostroot
+          mountPath: /host
           readOnly: true
         - name: hostmounts
-          mountPath: /host/mounts
+          mountPath: /hostmounts
           readOnly: true
         readinessProbe:
           httpGet:
@@ -61,13 +58,9 @@ spec:
           periodSeconds: 2
           failureThreshold: 10
       volumes:
-      - name: hostvar
+      - name: hostroot
         hostPath:
-          path: /var
-          type: Directory
-      - name: hostrun
-        hostPath:
-          path: /run
+          path: /
           type: Directory
       - name: hostmounts
         hostPath:

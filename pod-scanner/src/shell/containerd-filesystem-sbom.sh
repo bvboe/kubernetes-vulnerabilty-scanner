@@ -26,7 +26,7 @@ echo SOURCE_NAME: $SOURCE_NAME
 echo SOURCE_VERSION: $SOURCE_VERSION
 rm -f $OUTPUT_FILE
 
-current_config=`cat /host/mounts | grep ${cleaned_container_id}`
+current_config=`cat /hostmounts | grep ${cleaned_container_id}`
 lower_dir_path=$(echo "$current_config" | sed -n 's/.*lowerdir=\([^,]*\),upperdir=.*/\1/p')
 
 cd /tmp

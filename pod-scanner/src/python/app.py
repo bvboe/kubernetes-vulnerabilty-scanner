@@ -101,13 +101,13 @@ def index():
     print("index()")
     return "Scanner application running!\n"
 
-@app.route("/sbom" , methods=['GET'])
-def get_sbom():
+@app.route("/image-sbom" , methods=['GET'])
+def get_image_sbom():
     image = request.args.get('image')
     image_id = request.args.get('image_id')
     container_id = request.args.get('container_id')
     sbom_file = "/tmp/sbom.json"
-    print(f"get_sbom()")
+    print(f"get_image_sbom()")
     print(f"image: {image}")
     print(f"image_id: {image_id}")
     print(f"container_id: {container_id}")
@@ -143,6 +143,22 @@ def get_sbom():
             print(f"Invalid configuration - {HOST_CONFIGURATION}, returning none")
             return {"result": "fail"}
 
+@app.route("/host-sbom" , methods=['GET'])
+def get_host_sbom():
+    sbom_file = "/tmp/host-sbom.json"
+    print(f"get_host_sbom()")
+
+    # This function is currently designed to only handle one call at the time
+    # which is also the way the vulnerability coordinator works
+    # The lock is just a safety feature
+    with GET_SBOM_LOCK:
+        create_sbom(["./host-sbom.sh", sbom_file])
+        sbom = load_sbom(sbom_file)
+        if sbom:
+            return {"result": "success", "sbom": sbom}
+        else:
+            return {"result": "fail"}
+
 def load_sbom(file_path):
     print(f"load_sbom({file_path})")
     try:
@@ -159,7 +175,6 @@ def create_sbom(sbom_call):
 
     try:
         result = subprocess.run(sbom_call, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
-        #result = subprocess.run(sbom_call, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True, timeout=120)
         print(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Command failed with return code {e.returncode}")
