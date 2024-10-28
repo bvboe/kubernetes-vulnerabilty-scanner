@@ -60,6 +60,7 @@ async function renderHeaderTable(currentUrl, currentNamespace) {
     doRenderHeaderCell(tableRow, "Summary", "index.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "Images", "images.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "Pods", "pods.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableRow, "Nodes", "nodes.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "CVEs", "cves.html", currentUrl, currentNamespace);
     doRenderHeaderCell(tableRow, "SBOM", "sbom.html", currentUrl, currentNamespace);
 }

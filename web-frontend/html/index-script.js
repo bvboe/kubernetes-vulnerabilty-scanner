@@ -65,7 +65,7 @@ async function loadDistroTable(selectedNamespace) {
         console.log("Namespace is set");
         namespaceString = "?namespace="+selectedNamespace;
     }
-    const response = await fetch("/api/distro/summary" + namespaceString);
+    const response = await fetch("/api/distro/container-summary" + namespaceString);
     console.log("loadDistroTable() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
@@ -110,15 +110,62 @@ async function loadDistroTable(selectedNamespace) {
     }
 }
 
-async function loadScanStatus(selectedNamespace) {
-    console.log("loadScanStatus(" + selectedNamespace + ")");
+async function loadNodeTable() {
+    console.log("loadNodeTable()");
+    const response = await fetch("/api/distro/node-summary");
+    console.log("loadDistroTable() - Got data")
+    // Check if the response is OK (status code 200)
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+
+    // Parse the JSON data from the response
+    const data = await response.json();
+
+    // Get the table body element where rows will be added
+    const tableBody = document.querySelector("#nodeSummaryTable tbody");
+
+    //Clear the table
+    tableBody.replaceChildren();
+
+    rowCounter = 0;
+    data.forEach(item => {
+        rowCounter++;
+        console.log(item)
+        // Create a new row
+        const newRow = document.createElement("tr");
+        const scannedNodes = item.scanned_nodes;
+        addCellToRow(newRow, "left", item.distro_name + " (" + item.distro_id + ")");
+        addCellToRow(newRow, "right", formatNumber(scannedNodes));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_critical, scannedNodes), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_high, scannedNodes), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_medium, scannedNodes), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_low, scannedNodes), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_negligible, scannedNodes), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.cves_unknown, scannedNodes), 2));
+        addCellToRow(newRow, "right", formatNumber(calculateAveragePerContainer(item.number_of_packages, scannedNodes), 0));
+          
+        // Append the new row to the table body
+        tableBody.appendChild(newRow);
+    });
+
+    if(rowCounter == 0) {
+        const newRow = document.createElement("tr");
+        const newCell = addCellToRow(newRow, "left", "No Data Available");
+        newCell.colSpan = 9;
+        tableBody.appendChild(newRow);
+    }
+}
+
+async function loadContainerScanStatus(selectedNamespace) {
+    console.log("loadContainerScanStatus(" + selectedNamespace + ")");
     namespaceString="";
     if(selectedNamespace !== null) {
         console.log("Namespace is set");
         namespaceString = "?namespace="+selectedNamespace;
     }
     const response = await fetch("/api/image/scanstatus" + namespaceString);
-    console.log("loadScanStatus() - Got data")
+    console.log("loadContainerScanStatus() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -129,6 +176,29 @@ async function loadScanStatus(selectedNamespace) {
 
     // Get the table body element where rows will be added
     const tableBody = document.querySelector("#containerScanStatus tbody");
+    tableBody.replaceChildren();
+
+    addStatusTableRow(tableBody, "Scanning", data.SCANNING);
+    addStatusTableRow(tableBody, "To Be Scanned", data.TO_BE_SCANNED);
+    addStatusTableRow(tableBody, "Successfully Scanned", data.COMPLETE);
+    addStatusTableRow(tableBody, "Failed", data.SCAN_FAILED);
+    addStatusTableRow(tableBody, "Missing Scan Information", data.NO_SCAN_AVAILABLE);
+}
+
+async function loadNodeScanStatus() {
+    console.log("loadNodeScanStatus()");
+    const response = await fetch("/api/host/scanstatus");
+    console.log("loadNodeScanStatus() - Got data")
+    // Check if the response is OK (status code 200)
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+
+    // Parse the JSON data from the response
+    const data = await response.json();
+
+    // Get the table body element where rows will be added
+    const tableBody = document.querySelector("#nodeScanStatus tbody");
     tableBody.replaceChildren();
 
     addStatusTableRow(tableBody, "Scanning", data.SCANNING);
@@ -178,7 +248,9 @@ const namespace = urlParams.get('namespace');
 
 loadNamespaceSummaryTable(namespace);
 loadDistroTable(namespace);
-loadScanStatus(namespace);
+loadNodeTable();
+loadContainerScanStatus(namespace);
+loadNodeScanStatus();
 loadNamespaceTable("index.html", namespace);
 renderHeaderTable("index.html", namespace);
 initCsvLink(namespace);

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Vulnerability Dashboard</title>
+        <script src="shared-scripts.js" defer></script>
+        <script src="nodes-script.js" defer></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <table width="100%">
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr id="headerRow">
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <table id="namespaceTable">
+                        <thead>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+                <td width="100%" valign="top">
+                    <div style="text-align: right; text-decoration: underline;"><b><a href="/api/vulnsummary/node?output=csv" id="csvlink">Export to CSV</a></b></div>
+                    <table id="vulnerabilityTable" width="100%" class="listingTable">
+                        <thead>
+                            <tr>
+                                <th rowspan="2"><b>Host Name</b></th>
+                                <th rowspan="2"><b>OS Distribution</b></th>
+                                <th colspan="6"><b>Vulnerabilities</b></th>
+                                <th rowspan="2"><b># Packages</b></th>
+                            </tr>
+                            <tr>
+                                <th><b>Critical</b></th>
+                                <th><b>High</b></th>
+                                <th><b>Medium</b></th>
+                                <th><b>Low</b></th>
+                                <th><b>Negligible</b></th>
+                                <th><b>Unknown</b></th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
