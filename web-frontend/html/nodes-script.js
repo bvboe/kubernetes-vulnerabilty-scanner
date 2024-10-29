@@ -22,7 +22,7 @@ async function loadNodeTable() {
         // Create a new row
         const newRow = document.createElement("tr");
 
-        addCellToRow(newRow, "left", item.node_name);
+        addCellToRow(newRow, "left", "<a href=\"node.html?nodename=" + item.node_name + "\">" + item.node_name + "</a>");
         switch(item.scan_status) {
             case "COMPLETE":
                 addCellToRow(newRow, "left", item.distro_name + " (" + item.distro_id + ")");
