@@ -187,7 +187,7 @@ async function loadContainerScanStatus(selectedNamespace) {
 
 async function loadNodeScanStatus() {
     console.log("loadNodeScanStatus()");
-    const response = await fetch("/api/host/scanstatus");
+    const response = await fetch("/api/node/scanstatus");
     console.log("loadNodeScanStatus() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
