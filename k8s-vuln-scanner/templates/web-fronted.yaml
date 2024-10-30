@@ -32,7 +32,7 @@ metadata:
   labels:
     app: web-frontend
 spec:
-  type: ClusterIP
+  type: {{ .Values.webFrontend.serviceType }}
   selector:
     app: web-frontend
   ports:
