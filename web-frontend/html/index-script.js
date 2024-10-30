@@ -243,6 +243,21 @@ function initCsvLink(selectedNamespace) {
     }
 }
 
+async function initClusterName() {
+    console.log("initClusterName()");
+    const response = await fetch("/api/clustername");
+    console.log("initClusterName() - Got data")
+    // Check if the response is OK (status code 200)
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+
+    // Parse the JSON data from the response
+    const clusterName = await response.text();
+    const clusternameDiv = document.getElementById("clusterName");
+    clusternameDiv.innerText = clusterName + " Vulnerability Dashboard";
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 const namespace = urlParams.get('namespace');
 
@@ -254,3 +269,4 @@ loadNodeScanStatus();
 loadNamespaceTable("index.html", namespace);
 renderHeaderTable("index.html", namespace);
 initCsvLink(namespace);
+initClusterName();
