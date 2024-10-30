@@ -1,7 +1,7 @@
 # Other additions
 dev-*
 
-
+test-sboms
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
