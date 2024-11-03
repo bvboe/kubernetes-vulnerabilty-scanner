@@ -5,6 +5,7 @@ SNAPSHOT_FOLDER=${3}
 OUTPUT_FILE=${4}
 
 echo "./containerd-filesystem-sbom.sh \"${1}\" \"${2}\" \"${3}\" \"${4}\""
+date
 
 echo CONTAINER_ID: $CONTAINER_ID
 echo IMAGE: $IMAGE

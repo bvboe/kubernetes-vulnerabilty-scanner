@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "./check-environment.sh \"$1\" \"$2\""
+date
 CONFIG_OUTPUT_FILE=$1
 POTENTIAL_CONTAINERD_SNAPSHOT_LOCATIONS=$2
 

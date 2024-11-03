@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "./docker-check-environment.sh \"$1\" \"$2\""
+date
 CONFIG_OUTPUT_FILE=$1
 POTENTIAL_DOCKER_SOCKET_LOCATIONS=$2
 

@@ -2,6 +2,7 @@
 OUTPUT_FILE=${1}
 
 echo "./host-sbom.sh \"${1}\""
+date
 
 echo OUTPUT_FILE: $OUTPUT_FILE
 

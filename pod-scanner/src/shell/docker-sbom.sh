@@ -4,6 +4,7 @@ OUTPUT_FILE=${2}
 IMAGE_ID=${3}
 
 echo docker-sbom.sh $DOCKER_HOST $OUTPUT_FILE $IMAGE_ID
+date
 
 rm -f ${OUTPUT_FILE}
 

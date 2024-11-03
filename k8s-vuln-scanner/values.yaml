@@ -4,7 +4,7 @@ podScanner:
   image:
     repository: "bjornvb/k8s-pod-scanner"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.36"
+    tag: "0.1.37"
   #Settings determining how the scanner integrates with container manager
   scannerIntegration:
     #Comma-separated list of potential places the docer socket could be on the scanner container.
@@ -16,12 +16,12 @@ vulnerabilityCoordinator:
   externalStorage: true
   # Refresh the cache to ensure data consistency every 30 minutes
   cacheRefreshMinuteInterval: 30
-  # Regenerate all vulnerability information every 6hrs, just in case there are new vulnerabilities
-  forceRescanMinuteInterval: 360
+  # How often to check if the vulnerability database changes, which will trigger a rescan of all images and nodes
+  checkRemoteScannerMetadataInterval: 30
   image:
     repository: "bjornvb/k8s-scanner-vulnerability-coordinator"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.36"
+    tag: "0.1.37"
 webFrontend:
   enabled: true
   # How is the web frontend exposed to the world?
@@ -30,4 +30,4 @@ webFrontend:
   image:
     repository: "bjornvb/k8s-scanner-web-frontend"
     pullPolicy: "IfNotPresent"
-    tag: "0.1.36"
+    tag: "0.1.37"
