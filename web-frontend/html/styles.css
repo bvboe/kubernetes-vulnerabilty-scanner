@@ -33,7 +33,10 @@ a {
     /* border: 1px solid; */
 }
 
-
+#headerTable {
+    background-color: lightgrey; /* Sets the background color to light grey */
+    border: 1px solid black;     /* Adds a solid black border around the table */
+  }
 
 /* Style the container to mimic an h1 */
 .namespaceSelectContainer {

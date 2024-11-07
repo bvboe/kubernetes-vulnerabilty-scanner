@@ -51,7 +51,7 @@ function doRenderHeaderCell(tableBody, title, url, currentUrl, currentNamespace)
         decorationFront=""
         decorationEnd=""
     }
-    cell.innerHTML = "<h1><a href=\"" + fullUrl + "\">" + decorationFront + title + decorationEnd + "</a></h1>";
+    cell.innerHTML = "<h2><a href=\"" + fullUrl + "\">" + decorationFront + title + decorationEnd + "</a></h2>";
     //cell.innerHTML = "<a href=\"" + fullUrl + "\">" + decorationFront + title + decorationEnd + "</a>";
     row.appendChild(cell);
     tableBody.appendChild(row);
