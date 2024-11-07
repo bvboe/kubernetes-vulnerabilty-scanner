@@ -58,5 +58,6 @@ const namespace = urlParams.get('namespace');
 
 loadSBOMTable(namespace);
 loadNamespaceTable("sbom.html", namespace);
-renderHeaderTable("sbom.html", namespace);
+renderSectionTable("sbom.html", namespace);
 initCsvLink(namespace);
+initClusterName("Software Bill of Materials");

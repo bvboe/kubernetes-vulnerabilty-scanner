@@ -85,5 +85,6 @@ const namespace = urlParams.get('namespace');
 
 loadContainerTable(namespace);
 loadNamespaceTable("images.html", namespace);
-renderHeaderTable("images.html", namespace);
+renderSectionTable("images.html", namespace);
 initCsvLink(namespace);
+initClusterName("Image Summary");

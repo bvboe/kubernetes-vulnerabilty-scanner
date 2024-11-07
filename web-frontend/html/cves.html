@@ -11,22 +11,30 @@
     <body>
         <table width="100%">
             <tr>
-                <td colspan="2">
-                    <table>
-                        <tr id="headerRow">
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
                 <td valign="top">
-                    <table id="namespaceTable">
+                    <table id="headerTable">
                         <thead>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                        </tbody>
                     </table>
                 </td>
                 <td width="100%" valign="top">
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <h1><div id=clusterName>Cluster Name</div></h1>
+                            </td>
+                            <td style="text-align: right">
+                                <div class="namespaceSelectContainer">
+                                    <h1><label for="namespace">Namespace:</label>
+                                    <select name="namespace" id="namespaceSelect" onchange="onNamespaceChange(this.value)">
+                                    </select>
+                                    </h1>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                     <div style="text-align: right; text-decoration: underline;"><b><a href="" id="csvlink">Export to CSV</a></b></div>
                     <table id="cvesTable" width="100%" class="listingTable">
                         <thead>

@@ -86,5 +86,6 @@ const namespace = urlParams.get('namespace');
 
 loadPodsTable(namespace);
 loadNamespaceTable("pods.html", namespace);
-renderHeaderTable("pods.html", namespace);
+renderSectionTable("pods.html", namespace);
 initCsvLink(namespace);
+initClusterName("Pod Summary");

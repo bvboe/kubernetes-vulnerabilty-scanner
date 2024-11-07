@@ -1,5 +1,6 @@
 h1 {
-    padding: 10px 20px;
+    padding: 0px 10px;
+    font-family: 'Times', "Times New Roman", serif;
 }
 
 h2 {
@@ -31,3 +32,45 @@ a {
     padding: 8px 10px 8px 20px;    
     /* border: 1px solid; */
 }
+
+
+
+/* Style the container to mimic an h1 */
+.namespaceSelectContainer {
+    position: relative;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: bold;
+    color: inherit;
+  }
+  
+  /* Style the select element */
+  .namespaceSelectContainer select {
+    font-family: 'Times', "Times New Roman", serif;
+    font-size: inherit;
+    font-weight: inherit;
+    margin: 0;
+    padding: 0em 0.6em 0em 0;
+    border: none;
+    background: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    color: inherit;
+    width: auto;
+  }
+  
+  /* Add the custom arrow using the container's ::after pseudo-element */
+  .namespaceSelectContainer::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 1em;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    border-left: 0.35em solid transparent;
+    border-right: 0.35em solid transparent;
+    border-top: 0.35em solid currentColor;
+    transform: translateY(-50%);
+  }

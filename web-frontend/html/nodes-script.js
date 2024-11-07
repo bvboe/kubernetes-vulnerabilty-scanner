@@ -72,4 +72,5 @@ const namespace = urlParams.get('namespace');
 
 loadNodeTable();
 loadNamespaceTable("nodes.html", namespace);
-renderHeaderTable("nodes.html", namespace);
+renderSectionTable("nodes.html", namespace);
+initClusterName("Node Summary");

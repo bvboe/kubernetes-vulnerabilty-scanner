@@ -11,33 +11,33 @@ async function loadNamespaceTable(currentUrl, currentNamespace) {
     const data = await response.json();
     console.log(data)
 
-    // Get the table body element where rows will be added
-    const tableBody = document.querySelector("#namespaceTable tbody");
+    const select = document.getElementById("namespaceSelect")
 
-    //Clear the table
-    tableBody.replaceChildren();
-    addNamespaceRow(tableBody, "All Namespaces", currentUrl, null, currentNamespace);
+    addNamespaceSelect(select, "All Namespaces", currentUrl, currentNamespace, false);
+    addNamespaceSelect(select, "─────", currentUrl, currentNamespace, true);
     data.forEach(item => {
-        addNamespaceRow(tableBody, item, currentUrl + "?namespace=" + item, item, currentNamespace);
+        addNamespaceSelect(select, item, currentUrl + "?namespace=" + item, currentNamespace, false);
     });
 }
 
-function addNamespaceRow(tableBody, name, namespaceUrl, selectedNamespace, currentNamespace) {
-    const newRow = document.createElement("tr");
-    const cell = document.createElement("td");
-    if(selectedNamespace == currentNamespace) {
-        decorationFront="<u>"
-        decorationEnd="</u>"
-    } else {
-        decorationFront=""
-        decorationEnd=""
+function addNamespaceSelect(select, namespace, namespaceUrl, selectedNamespace, disabled) {
+    var option = document.createElement("option");
+
+    // Set the text and value
+    option.text = namespace;
+    option.value = namespaceUrl;
+
+    if (selectedNamespace == namespace) {
+        option.selected = true;
     }
-    cell.innerHTML = "<h2><a href=\""+namespaceUrl+"\">" + decorationFront + name + decorationEnd + "</a></h2>"
-    newRow.appendChild(cell);
-    tableBody.appendChild(newRow);
+    option.disabled = disabled;
+    
+    // Add the option to the select element
+    select.add(option);
 }
 
-function doRenderHeaderCell(tableRow, title, url, currentUrl, currentNamespace) {
+function doRenderHeaderCell(tableBody, title, url, currentUrl, currentNamespace) {
+    const row = document.createElement("tr");
     const cell = document.createElement("td");
     if(currentNamespace == null) {
         fullUrl = url;
@@ -52,19 +52,42 @@ function doRenderHeaderCell(tableRow, title, url, currentUrl, currentNamespace) 
         decorationEnd=""
     }
     cell.innerHTML = "<h1><a href=\"" + fullUrl + "\">" + decorationFront + title + decorationEnd + "</a></h1>";
-    tableRow.appendChild(cell);
+    //cell.innerHTML = "<a href=\"" + fullUrl + "\">" + decorationFront + title + decorationEnd + "</a>";
+    row.appendChild(cell);
+    tableBody.appendChild(row);
 }
 
-async function renderHeaderTable(currentUrl, currentNamespace) {
-    const tableRow = document.querySelector("#headerRow")
-    doRenderHeaderCell(tableRow, "Summary", "index.html", currentUrl, currentNamespace);
-    doRenderHeaderCell(tableRow, "Images", "images.html", currentUrl, currentNamespace);
-    doRenderHeaderCell(tableRow, "Pods", "pods.html", currentUrl, currentNamespace);
-    doRenderHeaderCell(tableRow, "Nodes", "nodes.html", currentUrl, currentNamespace);
-    doRenderHeaderCell(tableRow, "CVEs", "cves.html", currentUrl, currentNamespace);
-    doRenderHeaderCell(tableRow, "SBOM", "sbom.html", currentUrl, currentNamespace);
+async function renderSectionTable(currentUrl, currentNamespace) {
+    const tableBody = document.querySelector("#headerTable tbody");
+    tableBody.replaceChildren();
+
+    doRenderHeaderCell(tableBody, "Summary", "index.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableBody, "Images", "images.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableBody, "Pods", "pods.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableBody, "Nodes", "nodes.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableBody, "CVEs", "cves.html", currentUrl, currentNamespace);
+    doRenderHeaderCell(tableBody, "SBOM", "sbom.html", currentUrl, currentNamespace);
 }
 
 function formatNumber(num, digits = 0) {
     return num.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+
+function onNamespaceChange(selectedNamespace) {
+    window.location.href = selectedNamespace;
+}
+
+async function initClusterName(pageTitle) {
+    console.log("initClusterName()");
+    const response = await fetch("/api/clustername");
+    console.log("initClusterName() - Got data")
+    // Check if the response is OK (status code 200)
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+
+    // Parse the JSON data from the response
+    const clusterName = await response.text();
+    const clusternameDiv = document.getElementById("clusterName");
+    clusternameDiv.innerText = pageTitle + " - " + clusterName;
 }

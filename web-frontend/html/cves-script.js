@@ -61,5 +61,6 @@ const namespace = urlParams.get('namespace');
 
 loadCVEsTable(namespace);
 loadNamespaceTable("cves.html", namespace);
-renderHeaderTable("cves.html", namespace);
+renderSectionTable("cves.html", namespace);
 initCsvLink(namespace);
+initClusterName("CVE Summary");

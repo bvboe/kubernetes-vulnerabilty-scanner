@@ -89,7 +89,8 @@ def sayHello():
     result = {
         "status": status,
         "node_name": NODE_NAME,
-        "pod_ip": POD_IP
+        "pod_ip": POD_IP,
+        "uptime": get_system_uptime()
     }
     strresult=json.dumps(result)
     print(f"sayHello(): {strresult}")
@@ -184,3 +185,10 @@ def create_sbom(sbom_call):
         print("The specified command was not found.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+def get_system_uptime():
+    print(f"get_system_uptime()")
+
+    with open('/host/proc/uptime', 'r') as f:
+        uptime_seconds = float(f.readline().split()[0])
+    return uptime_seconds
