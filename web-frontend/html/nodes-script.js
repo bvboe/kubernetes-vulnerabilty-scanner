@@ -1,7 +1,36 @@
+function generateUrl(includeCSVOption) {
+    const api = "/api/vulnsummary/nodeii";
+    args = "";
+    if (includeCSVOption) {
+        args = "?output=csv"
+    }
+    //args = addSelectedItemsToArgument(args, "namespaceFilter", "namespace");
+    args = addSelectedItemsToArgument(args, "vulnerabilityStatusFilter", "fixstatus");
+    args = addSelectedItemsToArgument(args, "packageTypeFilter", "packagetype");
+    return api + args;
+}
+
+function addSelectedItemsToArgument(currentArgument, selectId, urlArgument) {
+    selectElement = document.getElementById(selectId);
+    selectedValues = Array.from(selectElement.selectedOptions).map(option => option.value);
+    if (selectedValues.length > 0) {
+        commaSeparatedList = selectedValues.join(",");
+        urlEncodedList = encodeURIComponent(commaSeparatedList);
+        if(currentArgument == "") {
+            return "?" + urlArgument + "=" + urlEncodedList;
+        } else {
+            return currentArgument + "&" + urlArgument + "=" + urlEncodedList;
+        }
+    } else {
+        return currentArgument;
+    }
+}
+
 async function loadNodeTable() {
     console.log("loadNodeTable()");
-    namespaceString="";
-    const response = await fetch("/api/vulnsummary/node");
+    url = generateUrl(false);
+    console.log("Use URL: " + url)
+    const response = await fetch(url);
     console.log("loadNodeTable() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
@@ -18,7 +47,7 @@ async function loadNodeTable() {
     tableBody.replaceChildren();
 
     data.forEach(item => {
-        console.log(item)
+        //console.log(item)
         // Create a new row
         const newRow = document.createElement("tr");
 
@@ -26,13 +55,13 @@ async function loadNodeTable() {
         switch(item.scan_status) {
             case "COMPLETE":
                 addCellToRow(newRow, "left", item.distro_name + " (" + item.distro_id + ")");
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.critical));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.high));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.medium));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.low));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.negligible));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.unknown));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.number_of_packages));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.critical));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.high));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.medium));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.low));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.negligible));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.unknown));
+                addCellToRow(newRow, "right", formatNumber(item.number_of_packages));
                 break;
             case "SCANNING":
                 newCell = addCellToRow(newRow, "left", "Scanning");
@@ -67,10 +96,31 @@ function addCellToRow(toRow, align, text) {
     return cell;
 }
 
-const urlParams = new URLSearchParams(window.location.search);
-const namespace = urlParams.get('namespace');
+function toggleFilterVisible() {
+    console.log("Starting");
+    filterCell = document.getElementById("filterCell");
+    console.log(filterCell.className);
+    if (filterCell.className == "filterUnSelected") {
+        // Show filters
+        filterCell.className = "filterSelected";
+        document.getElementById("filterContainer").className = "filterContainerSelected";
+        document.getElementById("filterDetails").style.display = "table-row-group";
+    } else {
+        filterCell.className = "filterUnSelected";
+        document.getElementById("filterContainer").className = "filterContainerUnSelected";
+        document.getElementById("filterDetails").style.display = "none";
+    }
+}
 
-loadNodeTable();
-loadNamespaceTable("nodes.html", namespace);
-renderSectionTable("nodes.html", namespace);
-initClusterName("Node Summary");
+function onFilterChange() {
+    loadNodeTable();
+    document.getElementById("csvlink").href = generateUrl(true);
+}
+
+$(function(){
+    initFilters();
+    loadNodeTable();
+    renderSectionTable("nodes.html", null);
+    document.getElementById("csvlink").href = generateUrl(true);
+    initClusterName("Node Summary");
+});

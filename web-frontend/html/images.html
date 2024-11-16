@@ -6,7 +6,10 @@
         <title>Vulnerability Dashboard</title>
         <script src="shared-scripts.js" defer></script>
         <script src="images-script.js" defer></script>
+        <script type="text/javascript" src="jquery-3.7.1.js"></script>
+        <script type="text/javascript" src="jquery.multi-select.js"></script>
         <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="multi-select-styles.css">
     </head>
     <body>
         <table width="100%">
@@ -20,21 +23,37 @@
                     </table>
                 </td>
                 <td width="100%" valign="top">
-                    <table width="100%">
-                        <tr>
-                            <td>
-                                <h1><div id=clusterName>Cluster Name</div></h1>
-                            </td>
-                            <td style="text-align: right">
-                                <div class="namespaceSelectContainer">
-                                    <h1><label for="namespace">Namespace:</label>
-                                    <select name="namespace" id="namespaceSelect" onchange="onNamespaceChange(this.value)">
-                                    </select>
-                                    </h1>
-                                </div>
-                            </td>
-                        </tr>
+                    <h1><div id=clusterName>Cluster Name</div></h1>
+                    <table style="border-collapse: collapse;"width="100%" id="filterTable">
+                        <thead>
+                            <tr>
+                                <td width="1%" style="cursor: pointer" onclick="toggleFilterVisible()" class="filterSelected" id="filterCell"><b><div class="filterContainerSelected" id="filterContainer">Filters</div></b></td>
+                                <td colspan="1"></td>
+                            </tr>
+                        </thead>
+                        <tbody id="filterDetails">
+                            <tr height="1px">
+                                <td style="border-left: 1px solid black;"/>
+                                <td style="border-top: 1px solid black; border-right: 1px solid black;"/>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="filterBody">
+                                    <form>
+                                        <label for="namespaces"><b>Namespace:</b></label>
+                                        <select id="namespaceFilter" name="namespaces" multiple onchange="onFilterChange()">
+                                        </select>
+                                        <label for="vulnerabilityStatus"><b>Vulnerability Status:</b></label>
+                                        <select id="vulnerabilityStatusFilter" name="vulnerabilityStatus" multiple onchange="onFilterChange()">
+                                        </select>
+                                        <label for="packageType"><b>Vulnerable Package Type:</b></label>
+                                        <select id="packageTypeFilter" name="packageType" multiple onchange="onFilterChange()">
+                                        </select>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
+
                     <div style="text-align: right; text-decoration: underline;"><b><a href="" id="csvlink">Export to CSV</a></b></div>
                     <table id="vulnerabilityTable" width="100%" class="listingTable">
                         <thead>

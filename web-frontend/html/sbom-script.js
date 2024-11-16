@@ -1,11 +1,35 @@
-async function loadSBOMTable(selectedNamespace) {
-    console.log("loadSBOMTable(" + selectedNamespace + ")");
-    namespaceString="";
-    if(selectedNamespace !== null) {
-        console.log("Namespace is set");
-        namespaceString = "?namespace="+selectedNamespace;
+function generateUrl(includeCSVOption) {
+    const api = "/api/sbomsummaryii";
+    args = "";
+    if (includeCSVOption) {
+        args = "?output=csv"
     }
-    const response = await fetch("/api/sbomsummary" + namespaceString);
+    args = addSelectedItemsToArgument(args, "namespaceFilter", "namespace");
+    args = addSelectedItemsToArgument(args, "packageTypeFilter", "packagetype");
+    return api + args;
+}
+
+function addSelectedItemsToArgument(currentArgument, selectId, urlArgument) {
+    selectElement = document.getElementById(selectId);
+    selectedValues = Array.from(selectElement.selectedOptions).map(option => option.value);
+    if (selectedValues.length > 0) {
+        commaSeparatedList = selectedValues.join(",");
+        urlEncodedList = encodeURIComponent(commaSeparatedList);
+        if(currentArgument == "") {
+            return "?" + urlArgument + "=" + urlEncodedList;
+        } else {
+            return currentArgument + "&" + urlArgument + "=" + urlEncodedList;
+        }
+    } else {
+        return currentArgument;
+    }
+}
+
+async function loadSBOMTable() {
+    console.log("loadSBOMTable()");
+    url = generateUrl(false);
+    console.log("Use URL: " + url)
+    const response = await fetch(url);
     console.log("loadSBOMTable() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
@@ -43,21 +67,31 @@ function addCellToRow(toRow, align, text) {
     return cell;
 }
 
-function initCsvLink(selectedNamespace) {
-    const csvLink = document.getElementById("csvlink");
-    if(selectedNamespace !== null) {
-        csvLink.href = "/api/sbomsummary?output=csv&namespace=" + selectedNamespace;
+function toggleFilterVisible() {
+    console.log("Starting");
+    filterCell = document.getElementById("filterCell");
+    console.log(filterCell.className);
+    if (filterCell.className == "filterUnSelected") {
+        // Show filters
+        filterCell.className = "filterSelected";
+        document.getElementById("filterContainer").className = "filterContainerSelected";
+        document.getElementById("filterDetails").style.display = "table-row-group";
     } else {
-        csvLink.href = "/api/sbomsummary?output=csv";
+        filterCell.className = "filterUnSelected";
+        document.getElementById("filterContainer").className = "filterContainerUnSelected";
+        document.getElementById("filterDetails").style.display = "none";
     }
 }
 
+function onFilterChange() {
+    loadSBOMTable();
+    document.getElementById("csvlink").href = generateUrl(true);
+}
 
-const urlParams = new URLSearchParams(window.location.search);
-const namespace = urlParams.get('namespace');
-
-loadSBOMTable(namespace);
-loadNamespaceTable("sbom.html", namespace);
-renderSectionTable("sbom.html", namespace);
-initCsvLink(namespace);
-initClusterName("Software Bill of Materials");
+$(function(){
+    initFilters();
+    loadSBOMTable();
+    renderSectionTable("sbom.html", null);
+    document.getElementById("csvlink").href = generateUrl(true);
+    initClusterName("Software Bill of Materials");
+});

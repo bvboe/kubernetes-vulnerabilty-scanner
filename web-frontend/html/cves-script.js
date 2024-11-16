@@ -1,11 +1,37 @@
-async function loadCVEsTable(selectedNamespace) {
-    console.log("loadCVEsTable(" + selectedNamespace + ")");
-    namespaceString="";
-    if(selectedNamespace !== null) {
-        console.log("Namespace is set");
-        namespaceString = "?namespace="+selectedNamespace;
+function generateUrl(includeCSVOption) {
+    const api = "/api/vulnsummary/cveii";
+    args = "";
+    if (includeCSVOption) {
+        args = "?output=csv"
     }
-    const response = await fetch("/api/vulnsummary/cve" + namespaceString);
+    args = addSelectedItemsToArgument(args, "namespaceFilter", "namespace");
+    args = addSelectedItemsToArgument(args, "vulnerabilityStatusFilter", "fixstatus");
+    args = addSelectedItemsToArgument(args, "packageTypeFilter", "packagetype");
+    args = addSelectedItemsToArgument(args, "vulnerabilitySeverityFilter", "severity");
+    return api + args;
+}
+
+function addSelectedItemsToArgument(currentArgument, selectId, urlArgument) {
+    selectElement = document.getElementById(selectId);
+    selectedValues = Array.from(selectElement.selectedOptions).map(option => option.value);
+    if (selectedValues.length > 0) {
+        commaSeparatedList = selectedValues.join(",");
+        urlEncodedList = encodeURIComponent(commaSeparatedList);
+        if(currentArgument == "") {
+            return "?" + urlArgument + "=" + urlEncodedList;
+        } else {
+            return currentArgument + "&" + urlArgument + "=" + urlEncodedList;
+        }
+    } else {
+        return currentArgument;
+    }
+}
+
+async function loadCVEsTable() {
+    console.log("loadCVEsTable()");
+    url = generateUrl(false);
+    console.log("Use URL: " + url)
+    const response = await fetch(url);
     console.log("loadCVEsTable() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
@@ -47,20 +73,31 @@ function addCellToRow(toRow, align, text) {
     return cell;
 }
 
-function initCsvLink(selectedNamespace) {
-    const csvLink = document.getElementById("csvlink");
-    if(selectedNamespace !== null) {
-        csvLink.href = "/api/vulnsummary/cve?output=csv&namespace=" + selectedNamespace;
+function toggleFilterVisible() {
+    console.log("Starting");
+    filterCell = document.getElementById("filterCell");
+    console.log(filterCell.className);
+    if (filterCell.className == "filterUnSelected") {
+        // Show filters
+        filterCell.className = "filterSelected";
+        document.getElementById("filterContainer").className = "filterContainerSelected";
+        document.getElementById("filterDetails").style.display = "table-row-group";
     } else {
-        csvLink.href = "/api/vulnsummary/cve?output=csv";
+        filterCell.className = "filterUnSelected";
+        document.getElementById("filterContainer").className = "filterContainerUnSelected";
+        document.getElementById("filterDetails").style.display = "none";
     }
 }
 
-const urlParams = new URLSearchParams(window.location.search);
-const namespace = urlParams.get('namespace');
+function onFilterChange() {
+    loadCVEsTable();
+    document.getElementById("csvlink").href = generateUrl(true);
+}
 
-loadCVEsTable(namespace);
-loadNamespaceTable("cves.html", namespace);
-renderSectionTable("cves.html", namespace);
-initCsvLink(namespace);
-initClusterName("CVE Summary");
+$(function(){
+    initFilters();
+    loadCVEsTable();
+    renderSectionTable("cves.html", null);
+    document.getElementById("csvlink").href = generateUrl(true);
+    initClusterName("CVE Summary");
+});

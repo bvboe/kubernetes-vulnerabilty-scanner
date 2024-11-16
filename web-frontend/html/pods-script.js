@@ -1,11 +1,36 @@
-async function loadPodsTable(selectedNamespace) {
-    console.log("loadPodsTable(" + selectedNamespace + ")");
-    namespaceString="";
-    if(selectedNamespace !== null) {
-        console.log("Namespace is set");
-        namespaceString = "?namespace="+selectedNamespace;
+function generateUrl(includeCSVOption) {
+    const api = "/api/vulnsummary/pod";
+    args = "";
+    if (includeCSVOption) {
+        args = "?output=csv"
     }
-    const response = await fetch("/api/podsummary" + namespaceString);
+    args = addSelectedItemsToArgument(args, "namespaceFilter", "namespace");
+    args = addSelectedItemsToArgument(args, "vulnerabilityStatusFilter", "fixstatus");
+    args = addSelectedItemsToArgument(args, "packageTypeFilter", "packagetype");
+    return api + args;
+}
+
+function addSelectedItemsToArgument(currentArgument, selectId, urlArgument) {
+    selectElement = document.getElementById(selectId);
+    selectedValues = Array.from(selectElement.selectedOptions).map(option => option.value);
+    if (selectedValues.length > 0) {
+        commaSeparatedList = selectedValues.join(",");
+        urlEncodedList = encodeURIComponent(commaSeparatedList);
+        if(currentArgument == "") {
+            return "?" + urlArgument + "=" + urlEncodedList;
+        } else {
+            return currentArgument + "&" + urlArgument + "=" + urlEncodedList;
+        }
+    } else {
+        return currentArgument;
+    }
+}
+
+async function loadPodsTable() {
+    console.log("loadPodsTable()");
+    url = generateUrl(false);
+    console.log("Use URL: " + url)
+    const response = await fetch(url);
     console.log("loadPodsTable() - Got data")
     // Check if the response is OK (status code 200)
     if (!response.ok) {
@@ -22,7 +47,7 @@ async function loadPodsTable(selectedNamespace) {
     tableBody.replaceChildren();
 
     data.forEach(item => {
-        console.log(item)
+        //console.log(item)
         // Create a new row
         const newRow = document.createElement("tr");
         addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.namespace + "</a");
@@ -31,13 +56,13 @@ async function loadPodsTable(selectedNamespace) {
 
         switch(item.scan_status) {
             case "COMPLETE":
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.critical));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.high));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.medium));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.low));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.negligible));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.by_severity.unknown));
-                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.number_of_packages));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.critical));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.high));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.medium));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.low));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.negligible));
+                addCellToRow(newRow, "right", formatNumber(item.vulnarbility_summary.unknown));
+                addCellToRow(newRow, "right", formatNumber(item.number_of_packages));
                 break;
             case "SCANNING":
                 newCell = addCellToRow(newRow, "left", "Scanning");
@@ -72,20 +97,32 @@ function addCellToRow(toRow, align, text) {
     return cell;
 }
 
-function initCsvLink(selectedNamespace) {
-    const csvLink = document.getElementById("csvlink");
-    if(selectedNamespace !== null) {
-        csvLink.href = "/api/podsummary?output=csv&namespace=" + selectedNamespace;
+function toggleFilterVisible() {
+    console.log("Starting");
+    filterCell = document.getElementById("filterCell");
+    console.log(filterCell.className);
+    if (filterCell.className == "filterUnSelected") {
+        // Show filters
+        filterCell.className = "filterSelected";
+        document.getElementById("filterContainer").className = "filterContainerSelected";
+        document.getElementById("filterDetails").style.display = "table-row-group";
     } else {
-        csvLink.href = "/api/podsummary?output=csv";
+        filterCell.className = "filterUnSelected";
+        document.getElementById("filterContainer").className = "filterContainerUnSelected";
+        document.getElementById("filterDetails").style.display = "none";
     }
 }
 
-const urlParams = new URLSearchParams(window.location.search);
-const namespace = urlParams.get('namespace');
+function onFilterChange() {
+    loadPodsTable();
+    document.getElementById("csvlink").href = generateUrl(true);
+}
 
-loadPodsTable(namespace);
-loadNamespaceTable("pods.html", namespace);
-renderSectionTable("pods.html", namespace);
-initCsvLink(namespace);
-initClusterName("Pod Summary");
+$(function(){
+    initFilters();
+    loadPodsTable();
+    renderSectionTable("pods.html", null);
+    document.getElementById("csvlink").href = generateUrl(true);
+    initClusterName("Pod Summary");
+});
+

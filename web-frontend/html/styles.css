@@ -77,3 +77,56 @@ a {
     border-top: 0.35em solid currentColor;
     transform: translateY(-50%);
   }
+
+td.filterSelected {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    padding: 8px 20px 8px 20px;    
+}
+
+td.filterUnSelected {
+    border: 1px solid black;
+    padding: 8px 20px 8px 20px;    
+}
+
+td.filterBody {
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    padding: 8px 20px 8px 20px;    
+}
+
+.filterContainerSelected {
+    position: relative;
+    display: inline-block;
+    padding-right: 20px; /* space for the triangle */
+}
+
+.filterContainerSelected::after {
+    content: "";
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid black; /* color of the triangle */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 5px;
+}
+
+.filterContainerUnSelected {
+    position: relative;
+    display: inline-block;
+    padding-right: 20px; /* space for the triangle */
+}
+
+.filterContainerUnSelected::after {
+    content: "";
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid black; /* color of the triangle */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 5px;
+}

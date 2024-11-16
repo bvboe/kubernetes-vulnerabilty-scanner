@@ -91,3 +91,88 @@ async function initClusterName(pageTitle) {
     const clusternameDiv = document.getElementById("clusterName");
     clusternameDiv.innerText = pageTitle + " - " + clusterName;
 }
+
+async function initFilters() {
+    const response = await fetch("/api/filters");
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const filterData = await response.json();
+    initSelect("namespaceFilter", filterData.namespaces);
+    initSelect("vulnerabilityStatusFilter", filterData['fix-states']);
+    initSelect("packageTypeFilter", filterData['unique-packages']);
+    initSelect("vulnerabilitySeverityFilter", filterData['severities']);
+    if ($('#categories').length) {
+        $('#categories').multiSelect({
+            noneText: 'All categories',
+            presets: [
+                {
+                    name: 'All categories',
+                    all: true
+                }
+            ]
+        });
+    }
+    if ($('#namespaceFilter').length) {
+        $('#namespaceFilter').multiSelect({
+            noneText: 'All namespaces',
+            presets: [
+                {
+                    name: 'All namespaces',
+                    all: true
+                }
+            ]
+        });
+    }
+    if ($('#vulnerabilityStatusFilter').length) {
+        $('#vulnerabilityStatusFilter').multiSelect({
+            noneText: 'All statuses',
+            presets: [
+                {
+                    name: 'All statuses',
+                    all: true
+                }
+            ]
+        });
+    }
+    if ($('#packageTypeFilter').length) {
+        $('#packageTypeFilter').multiSelect({
+            noneText: 'All package types',
+            presets: [
+                {
+                    name: 'All package types',
+                    all: true
+                }
+            ]
+        });
+    }
+    if ($('#vulnerabilitySeverityFilter').length) {
+        $('#vulnerabilitySeverityFilter').multiSelect({
+            noneText: 'All severities',
+            presets: [
+                {
+                    name: 'All severities',
+                    all: true
+                }
+            ]
+        });
+    }
+}
+
+function initSelect(selectID, values) {
+    select = document.getElementById(selectID);
+    if (select != null) {
+        values.forEach(item => {
+            //console.log(item)
+            // Create a new row
+            var option = document.createElement("option");
+    
+            // Set the text and value
+            option.text = item;
+            option.value = item;
+        
+            // Add the option to the select element
+            select.add(option);
+        });
+    }
+}
