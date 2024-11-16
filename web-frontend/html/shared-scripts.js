@@ -160,6 +160,9 @@ async function initFilters() {
 }
 
 function initSelect(selectID, values) {
+    if (values == null) {
+        return;
+    }
     select = document.getElementById(selectID);
     if (select != null) {
         values.forEach(item => {
