@@ -11,11 +11,9 @@ COPY src/python/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 FROM cgr.dev/chainguard/glibc-dynamic:latest-dev
-#FROM cgr.dev/chainguard/python:latest-dev
 
 #Run as root for access to docker / containerd
 USER root
-#RUN apk add --no-cache syft ctr docker-cli nano jq
 RUN apk add --no-cache syft ctr docker-cli python-3.13 nano jq
 
 ENV LANG=C.UTF-8
