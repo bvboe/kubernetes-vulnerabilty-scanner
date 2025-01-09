@@ -51,7 +51,8 @@ async function loadContainerTable() {
         // Create a new row
         const newRow = document.createElement("tr");
 
-        addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.image + "</br>" + item.image_id + "</a");
+        //addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.image + "</br>" + item.image_id + "</a");
+        addCellToRow(newRow, "left", "<a href=\"image.html?imageid=" + item.image_id + "\">" + item.image + "</a");
         addCellToRow(newRow, "right", formatNumber(item.num_instances));
         switch(item.scan_status) {
             case "COMPLETE":
