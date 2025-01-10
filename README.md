@@ -75,7 +75,7 @@ Open Dashboard page and click New -> Import to import a pre-built Kubernetes vul
 <img width="1792" alt="image" src="https://github.com/user-attachments/assets/c0ddcb74-92e9-4bfb-9bed-91bd47a48a18">
 
 Open the following link in a separate window, copy into the JSON model window and click Load:
-https://raw.githubusercontent.com/bvboe/kubernetes-vulnerabilty-scanner/refs/heads/main/grafana-dashboard/vulnerability-dashboard.json
+https://raw.githubusercontent.com/bvboe/kubernetes-vulnerabilty-scanner/refs/heads/main/grafana-dashboard/container-vulnerability-dashboard.json
 <img width="1792" alt="image" src="https://github.com/user-attachments/assets/57aaf0b4-999f-4657-8cde-e0f753c52f9d">
 
 Select the defautl Prometheus datasource for the dashboard and click Import:
